@@ -14,7 +14,7 @@ abstract class BasePresenter<M, V : BaseView> {
     open var model: M? = null
         set(model) {
             field = model
-            compositeDisposableModel.disposeAll()
+            disposableListModel.disposeAll()
             updateView()
         }
 
@@ -22,13 +22,15 @@ abstract class BasePresenter<M, V : BaseView> {
 
     private var isViewReady = false
 
-    private val compositeDisposableModel = DisposableList()
-    private val compositeDisposableModelProcesses = DisposableList()
+    private val disposableListModel = DisposableList()
+    private val disposableListModelProcesses = DisposableList()
     protected val compositeDisposableView = CompositeDisposable()
     protected val compositeDisposableRxBus = CompositeDisposable()
 
     protected var loadingError = false
     protected var showLoadingError = true
+    protected fun loading() = disposableListModel.isRunning()
+    protected fun modelProcessing() = disposableListModelProcesses.isRunning()
 
     private val actionToApplyView: MutableList<(V) -> Unit> = mutableListOf()
 
@@ -47,7 +49,7 @@ abstract class BasePresenter<M, V : BaseView> {
             onViewNotReady()
         }
         view = null
-        compositeDisposableModel.disposeAll()
+        disposableListModel.disposeAll()
         compositeDisposableRxBus.clear()
         actionToApplyView.clear()
     }
@@ -78,10 +80,10 @@ abstract class BasePresenter<M, V : BaseView> {
 
     @CallSuper
     open protected fun onUpdateView(view: V) {
-        view.showProcessingModel(compositeDisposableModelProcesses.isRunning())
+        view.showProcessingModel(modelProcessing())
 
-        val canRefreshNow = model != null && compositeDisposableModelProcesses.isNotRunning() && canSwipeRefresh
-        view.setSwipeRefreshConfig(canRefreshNow, canRefreshNow && compositeDisposableModel.isRunning())
+        val canRefreshNow = model != null && !modelProcessing() && canSwipeRefresh
+        view.setSwipeRefreshConfig(canRefreshNow, canRefreshNow && loading())
 
         if (noModel) {
             view.showLayerModel()
@@ -90,9 +92,9 @@ abstract class BasePresenter<M, V : BaseView> {
 
         val model = model
         if (model == null) {
-            if (compositeDisposableModel.isNotRunning() && !loadingError) view.showLayerNothing()
+            if (!loading() && !loadingError) view.showLayerNothing()
             if (loadingError) if (showLoadingError) view.showLayerLoadingError() else view.showLayerNothing()
-            if (compositeDisposableModel.isRunning()) view.showLayerLoading()
+            if (loading()) view.showLayerLoading()
         } else {
             view.showLayerModel()
             onUpdateViewWithModel(view, model)
@@ -115,7 +117,7 @@ abstract class BasePresenter<M, V : BaseView> {
     open protected fun modelSource(): Single<M> = Single.just(Any() as M)
 
     fun loadModel() {
-        compositeDisposableModel.disposeAll()
+        disposableListModel.disposeAll()
         loadingError = false
         modelSource()
                 .subscribe({ m, throwable ->
@@ -126,7 +128,7 @@ abstract class BasePresenter<M, V : BaseView> {
                         updateView()
                     }
                 })
-                .addTo(compositeDisposableModel)
+                .addTo(disposableListModel)
         updateView()
     }
 
@@ -143,7 +145,7 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     open fun onReloadClicked() {
-        if (compositeDisposableModel.isRunning()) return
+        if (loading()) return
         loadModel()
     }
 
@@ -155,7 +157,7 @@ abstract class BasePresenter<M, V : BaseView> {
                 LogUtils.e(t = throwable)
                 onError(it)
             }
-        }.addTo(compositeDisposableModelProcesses)
+        }.addTo(disposableListModelProcesses)
         updateView()
     }
 
@@ -167,7 +169,7 @@ abstract class BasePresenter<M, V : BaseView> {
                 LogUtils.e(t = throwable)
                 onError(throwable)
             }
-        }.addTo(compositeDisposableModelProcesses)
+        }.addTo(disposableListModelProcesses)
         updateView()
     }
 }
