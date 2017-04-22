@@ -14,8 +14,8 @@ open class DisposableList {
         disposables = emptyList()
     }
 
-    fun areAllDisposed() = disposables.all { it.isDisposed }
     fun isRunning() = disposables.any { !it.isDisposed }
+    fun isNotRunning() = !isRunning()
 }
 
 fun Disposable.addTo(disposableList: DisposableList) {
