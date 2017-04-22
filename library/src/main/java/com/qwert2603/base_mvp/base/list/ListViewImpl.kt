@@ -1,19 +1,21 @@
 package com.qwert2603.base_mvp.base.list
 
-import android.os.Bundle
+import android.content.Context
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View
+import android.util.AttributeSet
+import android.widget.TextView
+import android.widget.ViewAnimator
+import com.qwert2603.base_mvp.base.BaseViewImpl
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewAdapter
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewHolder
 import com.qwert2603.base_mvp.model.IdentifiableLong
-import com.qwert2603.base_mvp.navigation.BackStackFragment
 import com.qwert2603.base_mvp.util.showIfNotYet
-import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.android.synthetic.main.fragment_list.view.*
 
-abstract class ListFragment<T : IdentifiableLong, V : ListView<T>, out P : ListPresenter<T, *, V>>
-    : BackStackFragment<V, P>(), ListView<T> {
+abstract class ListViewImpl<T : IdentifiableLong, V : ListView<T>, out P : ListPresenter<T, *, V>> @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+    : BaseViewImpl<V, P>(context, attrs, defStyleAttr), ListView<T> {
 
     companion object ViewAnimatorPositions {
         private const val POSITION_EMPTY = 0
@@ -25,19 +27,14 @@ abstract class ListFragment<T : IdentifiableLong, V : ListView<T>, out P : ListP
 
     protected abstract val adapter: BaseRecyclerViewAdapter<T, *>
 
-    open protected fun createLayoutManager(): RecyclerView.LayoutManager = LinearLayoutManager(activity)
+    open protected fun createLayoutManager(): RecyclerView.LayoutManager = LinearLayoutManager(context)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated() {
+        super.onViewCreated()
 
         list_recyclerView.layoutManager = createLayoutManager()
         list_recyclerView.adapter = adapter
         (list_recyclerView.layoutManager as? LinearLayoutManager)?.initialPrefetchItemCount = 6
-    }
-
-    override fun onDestroyView() {
-        list_recyclerView.apply { postDelayed({ adapter = null }, 2000) }
-        super.onDestroyView()
     }
 
     override fun showEmpty() {
@@ -68,4 +65,8 @@ abstract class ListFragment<T : IdentifiableLong, V : ListView<T>, out P : ListP
     override fun scrollToTop() {
         list_recyclerView.apply { post { scrollToPosition(0) } }
     }
+
+    protected fun list_recyclerView(): RecyclerView = list_recyclerView
+    protected fun list_empty_TextView(): TextView = list_empty_TextView
+    protected fun list_ViewAnimator(): ViewAnimator = list_ViewAnimator
 }

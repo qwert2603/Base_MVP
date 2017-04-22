@@ -8,7 +8,9 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
+import android.widget.ViewAnimator
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.inflate
@@ -48,6 +50,8 @@ abstract class BaseViewImpl<V : BaseView, out P : BasePresenter<*, V>> @JvmOverl
                     ContextCompat.getColor(context, R.color.colorPrimaryDark)
             )
             swipeRefreshLayout()?.setOnRefreshListener { presenter.onReloadClicked() }
+
+            onViewCreated()
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -66,6 +70,8 @@ abstract class BaseViewImpl<V : BaseView, out P : BasePresenter<*, V>> @JvmOverl
         presenter.unbindView()
         super.onDetachedFromWindow()
     }
+
+    open protected fun onViewCreated() {}
 
     override fun showProcessingModel(processingModel: Boolean) {
         fragment_base_processingModel_FrameLayout.visibility = if (processingModel) View.VISIBLE else View.GONE
@@ -108,5 +114,8 @@ abstract class BaseViewImpl<V : BaseView, out P : BasePresenter<*, V>> @JvmOverl
     protected fun makeToast(@StringRes stringRes: Int) {
         Toast.makeText(context, stringRes, Toast.LENGTH_SHORT).show()
     }
+
+    protected fun fragment_base_ViewAnimator(): ViewAnimator = fragment_base_ViewAnimator
+    protected fun fragment_base_error_message(): TextView = fragment_base_error_message
 
 }

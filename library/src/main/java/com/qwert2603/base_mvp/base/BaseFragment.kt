@@ -7,16 +7,20 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import android.widget.ViewAnimator
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
 import com.qwert2603.base_mvp.util.showIfNotYet
 import kotlinx.android.synthetic.main.fragment_base.*
+import kotlinx.android.synthetic.main.toolbar_default.*
 
 abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragment(), BaseView {
 
@@ -131,4 +135,8 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
     protected fun makeToast(@StringRes stringRes: Int) {
         Toast.makeText(context, stringRes, Toast.LENGTH_SHORT).show()
     }
+
+    protected fun fragment_base_ViewAnimator(): ViewAnimator = fragment_base_ViewAnimator
+    protected fun fragment_base_error_message(): TextView = fragment_base_error_message
+    protected fun toolbar(): Toolbar = toolbar
 }
