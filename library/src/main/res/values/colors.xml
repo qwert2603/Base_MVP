@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimarySemiTransparent">#7806B2C4</color>
+    <color name="colorPrimary">#06B2C4</color>
+    <color name="colorPrimaryDark">#06A2B4</color>
+    <color name="colorAccent">#FCBD26</color>
+    <color name="colorAccentDark">#ECAD16</color>
+
+    <color name="colorControlHighlight">#73A3A3A3</color>
+
+    <color name="error">#DD0000</color>
+
+    <color name="navigation_menu_item_background">#EEEEEE</color>
+    <color name="navigation_menu_item_background_selected">#DDDDDD</color>
+    <color name="navigation_menu_item_background_pressed">#CCCCCC</color>
+    <color name="navigation_menu_item_tint_selected">@color/colorPrimary</color>
+
+    <color name="disabled_button">#999999</color>
+</resources>

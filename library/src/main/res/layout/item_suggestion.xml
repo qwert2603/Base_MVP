@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/suggestion_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="56sp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        android:text="2017_Омск_SmartKit2017_Омск_SmartKit2017_Омск_SmartKit"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+</FrameLayout>
