@@ -2,7 +2,6 @@ package com.qwert2603.base_mvp.base
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.annotation.CallSuper
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -36,7 +35,6 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
     open protected fun swipeRefreshLayout(): SwipeRefreshLayout? = null
     open protected fun viewForSnackbar(): View = fragment_base_ViewAnimator
 
-    @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -45,14 +43,12 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
         LogUtils.d("BaseFragment ${hashCode()} ${this.javaClass} onCreate")
     }
 
-    @CallSuper
     override fun onDestroy() {
         LogUtils.d("BaseFragment ${hashCode()} ${this.javaClass} onDestroy")
         presenter.unbindView()
         super.onDestroy()
     }
 
-    @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         LogUtils.d("onViewCreated ${hashCode()} $this")

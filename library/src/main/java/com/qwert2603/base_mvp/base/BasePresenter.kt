@@ -1,6 +1,5 @@
 package com.qwert2603.base_mvp.base
 
-import android.support.annotation.CallSuper
 import com.qwert2603.base_mvp.util.DisposableList
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util._subscribe
@@ -38,12 +37,10 @@ abstract class BasePresenter<M, V : BaseView> {
 
     protected open val noModel = false
 
-    @CallSuper
     open fun bindView(view: V) {
         this.view = view
     }
 
-    @CallSuper
     open fun unbindView() {
         if (isViewReady) {
             onViewNotReady()
@@ -54,7 +51,6 @@ abstract class BasePresenter<M, V : BaseView> {
         actionToApplyView.clear()
     }
 
-    @CallSuper
     open fun onViewReady(view: V) {
         isViewReady = true
 
@@ -64,7 +60,6 @@ abstract class BasePresenter<M, V : BaseView> {
         updateView()
     }
 
-    @CallSuper
     open fun onViewNotReady() {
         isViewReady = false
         compositeDisposableView.clear()
@@ -78,7 +73,6 @@ abstract class BasePresenter<M, V : BaseView> {
         }
     }
 
-    @CallSuper
     open protected fun onUpdateView(view: V) {
         view.showProcessingModel(modelProcessing())
 
@@ -101,7 +95,6 @@ abstract class BasePresenter<M, V : BaseView> {
         }
     }
 
-    @CallSuper
     open protected fun onUpdateViewWithModel(view: V, model: M) {
     }
 
@@ -132,12 +125,10 @@ abstract class BasePresenter<M, V : BaseView> {
         updateView()
     }
 
-    @CallSuper
     open protected fun onModelLoadSuccess(m: M) {
         model = m
     }
 
-    @CallSuper
     open protected fun onModelLoadError(throwable: Throwable) {
         LogUtils.e(t = throwable)
         showLoadingError = true
