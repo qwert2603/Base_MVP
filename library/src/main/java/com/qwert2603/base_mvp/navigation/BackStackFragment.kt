@@ -14,7 +14,7 @@ import com.qwert2603.base_mvp.base.BaseView
 import com.qwert2603.base_mvp.util.LogUtils
 
 abstract class BackStackFragment<V : BaseView, out P : BasePresenter<*, V>> : BaseFragment<V, P>() {
-    internal fun getBackStackItem(): BackStackItem = arguments.getSerializable(BackStackItem.BACK_STACK_ITEM_KEY) as BackStackItem
+    fun getBackStackItem(): BackStackItem = arguments.getSerializable(BackStackItem.BACK_STACK_ITEM_KEY) as BackStackItem
 
     abstract fun title(): String
 
