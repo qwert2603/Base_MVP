@@ -130,6 +130,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     private fun changeBackStack(backStackChange: BackStackChange) {
         isInTransaction = true
 
+        if (backStackChange.to.isEmpty()) finish()
+
         if (backStackChange.from.last() != backStackChange.to.last()) {
             hideKeyboard()
         }
