@@ -23,6 +23,8 @@ import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.header_navigation.view.*
 import kotlinx.android.synthetic.main.toolbar_default.*
@@ -31,7 +33,7 @@ import javax.inject.Inject
 abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     companion object {
-        private const val BACK_STACK_KEY = "com.atconsulting.at_timing.navigation.BACK_STACK_KEY"
+        private const val BACK_STACK_KEY = "com.qwert2603.base_mvp.navigation.BACK_STACK_KEY"
     }
 
     protected abstract fun createDefaultBackStack(): List<BackStackItem>
@@ -45,6 +47,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     @Inject lateinit var navigationAdapter: NavigationAdapter
 
     lateinit private var headerNavigation: View
+
+    private val backStackPublishSubject = PublishSubject.create<BackStackChange>()
+    private lateinit var backStackDisposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BaseApplication.baseDiManager.navigationComponent().inject(this@BaseMainActivity)
@@ -77,6 +82,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             }
         })
 
+        backStackDisposable = backStackPublishSubject.subscribe {
+            changeBackStack(it)
+        }
+
         @Suppress("UNCHECKED_CAST")
         backStack = savedInstanceState?.getSerializable(BACK_STACK_KEY) as? List<BackStackItem> ?: createDefaultBackStack()
 
@@ -87,6 +96,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         with(headerNavigation) {
             navigation_recyclerView.adapter = null
         }
+        backStackDisposable.dispose()
         super.onDestroy()
     }
 
@@ -96,12 +106,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     override fun modifyBackStack(newBackStack: List<BackStackItem>) {
-        // Using View::post to avoid exceptions because this method can be called while FragmentManager is executing transaction.
-        fullscreen_FrameLayout.post {
-            val oldBackStack = backStack
-            backStack = newBackStack
-            changeBackStack(BackStackChange(oldBackStack, newBackStack))
-        }
+        val oldBackStack = backStack
+        backStack = newBackStack
+        backStackPublishSubject.onNext(BackStackChange(oldBackStack, newBackStack))
+
     }
 
     private fun changeBackStack(backStackChange: BackStackChange) {
@@ -210,7 +218,6 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         if (backStack.dropLastWhile { it.asNested }.size > 1) {
             goBack()
         } else {
-            backStack = createDefaultBackStack()
             finish()
         }
     }

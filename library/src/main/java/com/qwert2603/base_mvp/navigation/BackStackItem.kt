@@ -6,7 +6,7 @@ import java.io.Serializable
 abstract class BackStackItem : Serializable {
 
     companion object {
-        const val BACK_STACK_ITEM_KEY = "com.atconsulting.at_timing.navigation.BACK_STACK_ITEM_KEY"
+        const val BACK_STACK_ITEM_KEY = "com.qwert2603.base_mvp.navigation.BACK_STACK_ITEM_KEY"
     }
 
     abstract val tag: String
