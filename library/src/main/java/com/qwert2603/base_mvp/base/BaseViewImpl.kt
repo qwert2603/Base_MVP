@@ -115,7 +115,7 @@ abstract class BaseViewImpl<V : BaseView, out P : BasePresenter<*, V>> @JvmOverl
         Toast.makeText(context, stringRes, Toast.LENGTH_SHORT).show()
     }
 
-    protected fun fragment_base_ViewAnimator(): ViewAnimator = fragment_base_ViewAnimator
-    protected fun fragment_base_error_message(): TextView = fragment_base_error_message
+    protected val _fragment_base_ViewAnimator: ViewAnimator get() = fragment_base_ViewAnimator
+    protected val _fragment_base_error_message: TextView get() = fragment_base_error_message
 
 }

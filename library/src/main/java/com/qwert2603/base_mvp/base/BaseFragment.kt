@@ -136,7 +136,7 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
         Toast.makeText(context, stringRes, Toast.LENGTH_SHORT).show()
     }
 
-    protected fun fragment_base_ViewAnimator(): ViewAnimator = fragment_base_ViewAnimator
-    protected fun fragment_base_error_message(): TextView = fragment_base_error_message
-    protected fun toolbar(): Toolbar = toolbar
+    protected val _fragment_base_ViewAnimator: ViewAnimator get() = fragment_base_ViewAnimator
+    protected val _fragment_base_error_message: TextView get() = fragment_base_error_message
+    protected val _toolbar: Toolbar get() = toolbar
 }

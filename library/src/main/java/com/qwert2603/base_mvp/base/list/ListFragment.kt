@@ -5,6 +5,8 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.TextView
+import android.widget.ViewAnimator
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewAdapter
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewHolder
 import com.qwert2603.base_mvp.model.IdentifiableLong
@@ -68,4 +70,8 @@ abstract class ListFragment<T : IdentifiableLong, V : ListView<T>, out P : ListP
     override fun scrollToTop() {
         list_recyclerView.apply { post { scrollToPosition(0) } }
     }
+
+    protected val _list_recyclerView: RecyclerView get() = list_recyclerView
+    protected val _list_empty_TextView: TextView get() = list_empty_TextView
+    protected val _list_ViewAnimator: ViewAnimator get() = list_ViewAnimator
 }
