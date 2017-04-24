@@ -113,13 +113,13 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     private fun changeBackStack(backStackChange: BackStackChange) {
+        LogUtils.d("changeBackStack ${backStackChange.from.map { it.tag }} ${backStackChange.to.map { it.tag }}")
+
         if (backStackChange.to.isEmpty()) finish()
 
         if (backStackChange.from.last() != backStackChange.to.last()) {
             hideKeyboard()
         }
-
-        LogUtils.d("changeBackStack ${backStackChange.from.map { it.tag }} ${backStackChange.to.map { it.tag }}")
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.disallowAddToBackStack()
