@@ -66,7 +66,7 @@ abstract class ListViewImpl<T : IdentifiableLong, V : ListView<T>, out P : ListP
         list_recyclerView.apply { post { scrollToPosition(0) } }
     }
 
-    protected val _list_recyclerView: RecyclerView get() = list_recyclerView
-    protected val _list_empty_TextView: TextView get() = list_empty_TextView
-    protected val _list_ViewAnimator: ViewAnimator get() = list_ViewAnimator
+    val _list_recyclerView: RecyclerView get() = list_recyclerView
+    val _list_empty_TextView: TextView get() = list_empty_TextView
+    val _list_ViewAnimator: ViewAnimator get() = list_ViewAnimator
 }
