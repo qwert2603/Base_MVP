@@ -1,6 +1,5 @@
 package com.qwert2603.base_mvp.base
 
-import com.qwert2603.base_mvp.util.DisposableList
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util._subscribe
 import com.qwert2603.base_mvp.util.addTo
@@ -13,7 +12,7 @@ abstract class BasePresenter<M, V : BaseView> {
     open var model: M? = null
         set(model) {
             field = model
-            disposableListModel.disposeAll()
+            compositeDisposableModel.clear()
             updateView()
         }
 
@@ -21,15 +20,21 @@ abstract class BasePresenter<M, V : BaseView> {
 
     private var isViewReady = false
 
-    private val disposableListModel = DisposableList()
-    private val disposableListModelProcesses = DisposableList()
+    private val compositeDisposableModel = CompositeDisposable()
+    private val compositeDisposableModelProcesses = CompositeDisposable()
     protected val compositeDisposableView = CompositeDisposable()
     protected val compositeDisposableRxBus = CompositeDisposable()
 
     protected var loadingError = false
     protected var showLoadingError = true
-    protected fun loading() = disposableListModel.isRunning()
-    protected fun modelProcessing() = disposableListModelProcesses.isRunning()
+    protected var loading = false
+    protected var modelProcesses = 0
+        set(value) {
+            if (value != field) {
+                field = value
+                updateView()
+            }
+        }
 
     private val actionToApplyView: MutableList<(V) -> Unit> = mutableListOf()
 
@@ -46,7 +51,7 @@ abstract class BasePresenter<M, V : BaseView> {
             onViewNotReady()
         }
         view = null
-        disposableListModel.disposeAll()
+        compositeDisposableModel.clear()
         compositeDisposableRxBus.clear()
         actionToApplyView.clear()
     }
@@ -74,10 +79,10 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     open protected fun onUpdateView(view: V) {
-        view.showProcessingModel(modelProcessing())
+        view.showProcessingModel(modelProcesses > 0)
 
-        val canRefreshNow = model != null && !modelProcessing() && canSwipeRefresh
-        view.setSwipeRefreshConfig(canRefreshNow, canRefreshNow && loading())
+        val canRefreshNow = model != null && modelProcesses == 0 && canSwipeRefresh
+        view.setSwipeRefreshConfig(canRefreshNow, canRefreshNow && loading)
 
         if (noModel) {
             view.showLayerModel()
@@ -86,9 +91,9 @@ abstract class BasePresenter<M, V : BaseView> {
 
         val model = model
         if (model == null) {
-            if (!loading() && !loadingError) view.showLayerNothing()
+            if (!loading && !loadingError) view.showLayerNothing()
             if (loadingError) if (showLoadingError) view.showLayerLoadingError() else view.showLayerNothing()
-            if (loading()) view.showLayerLoading()
+            if (loading) view.showLayerLoading()
         } else {
             view.showLayerModel()
             onUpdateViewWithModel(view, model)
@@ -110,10 +115,12 @@ abstract class BasePresenter<M, V : BaseView> {
     open protected fun modelSource(): Single<M> = Single.just(Any() as M)
 
     fun loadModel() {
-        disposableListModel.disposeAll()
+        compositeDisposableModel.clear()
+        loading = true
         loadingError = false
         modelSource()
                 .subscribe({ m, throwable ->
+                    loading = false
                     loadingError = throwable != null
                     m?.let { onModelLoadSuccess(it) }
                     throwable?.let {
@@ -121,7 +128,7 @@ abstract class BasePresenter<M, V : BaseView> {
                         updateView()
                     }
                 })
-                .addTo(disposableListModel)
+                .addTo(compositeDisposableModel)
         updateView()
     }
 
@@ -136,31 +143,31 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     open fun onReloadClicked() {
-        if (loading()) return
+        if (loading) return
         loadModel()
     }
 
     fun <T> processModel(single: Single<T>, onSuccess: (T) -> Unit, onError: (Throwable) -> Unit) {
         single.subscribe { t: T?, throwable: Throwable? ->
-            updateView()
+            --modelProcesses
             t?.let(onSuccess)
             throwable?.let {
                 LogUtils.e(t = throwable)
                 onError(it)
             }
-        }.addTo(disposableListModelProcesses)
-        updateView()
+        }.addTo(compositeDisposableModelProcesses)
+        ++modelProcesses
     }
 
     fun processModel(completable: Completable, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
         completable._subscribe { throwable: Throwable? ->
-            updateView()
+            --modelProcesses
             if (throwable == null) onSuccess()
             else {
                 LogUtils.e(t = throwable)
                 onError(throwable)
             }
-        }.addTo(disposableListModelProcesses)
-        updateView()
+        }.addTo(compositeDisposableModelProcesses)
+        ++modelProcesses
     }
 }
