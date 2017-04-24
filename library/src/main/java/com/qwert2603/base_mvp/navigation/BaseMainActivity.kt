@@ -46,14 +46,6 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     lateinit private var headerNavigation: View
 
-    private var isInTransaction = false
-        set(value) {
-            field = value
-            LogUtils.d("isInTransaction == $field")
-        }
-
-    private var stackChanges = mutableListOf<BackStackChange>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         BaseApplication.baseDiManager.navigationComponent().inject(this@BaseMainActivity)
         super.onCreate(savedInstanceState)
@@ -108,28 +100,11 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         fullscreen_FrameLayout.post {
             val oldBackStack = backStack
             backStack = newBackStack
-
-            val backStackChange = BackStackChange(oldBackStack, newBackStack)
-
-            if (isInTransaction) {
-                LogUtils.d("modifyBackStack tackChanges.add ${backStackChange.from.map { it.tag }} ${backStackChange.to.map { it.tag }}")
-                stackChanges.add(backStackChange)
-                return@post
-            }
-
-            changeBackStack(backStackChange)
-
-            while (stackChanges.isNotEmpty()) {
-                val changes = ArrayList(stackChanges)
-                stackChanges.clear()
-                changes.forEach { changeBackStack(it) }
-            }
+            changeBackStack(BackStackChange(oldBackStack, newBackStack))
         }
     }
 
     private fun changeBackStack(backStackChange: BackStackChange) {
-        isInTransaction = true
-
         if (backStackChange.to.isEmpty()) finish()
 
         if (backStackChange.from.last() != backStackChange.to.last()) {
@@ -210,14 +185,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             }
         }
 
-        // todo: стоит использовать fragmentTransaction.commitNow(), но с таким методом происходит ошибка когда
-        // новая транзакция запускается из fragment::onResume
-        // (кидается исключение, что supportFragmentManager уже выполняет транзакцию, хотя isInTransaction == false).
-        // Чтобы исключения не было я использую fragmentTransaction.commitNowAllowingStateLoss() тут и
-        // fullscreen_FrameLayout.post {...} в override fun modifyBackStack(newBackStack: List<BackStackItem>).
         fragmentTransaction.commitNowAllowingStateLoss()
-
-        isInTransaction = false
     }
 
     override fun navigateTo(backStackItem: BackStackItem, delay: Boolean) {
