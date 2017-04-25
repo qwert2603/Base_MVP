@@ -76,6 +76,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
         navigationAdapter.modelList = navigationItems
 
+        // fixme: memory leak here
         drawerListener = object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_DRAGGING) {
@@ -85,6 +86,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
         drawer_layout.addDrawerListener(drawerListener)
 
+        // fixme: memory leak here
         backStackDisposable = backStackPublishSubject.subscribe {
             changeBackStack(it)
         }
