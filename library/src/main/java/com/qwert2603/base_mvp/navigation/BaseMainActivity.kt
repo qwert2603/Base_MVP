@@ -96,6 +96,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         with(headerNavigation) {
             navigation_recyclerView.adapter = null
         }
+        navigationAdapter.clickListener = null
         backStackDisposable.dispose()
         super.onDestroy()
     }
