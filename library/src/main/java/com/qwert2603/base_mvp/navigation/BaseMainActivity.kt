@@ -51,6 +51,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     private val backStackPublishSubject = PublishSubject.create<BackStackChange>()
     private lateinit var backStackDisposable: Disposable
 
+    private lateinit var drawerListener: DrawerLayout.SimpleDrawerListener
+
     override fun onCreate(savedInstanceState: Bundle?) {
         BaseApplication.baseDiManager.navigationComponent().inject(this@BaseMainActivity)
         super.onCreate(savedInstanceState)
@@ -74,13 +76,14 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
         navigationAdapter.modelList = navigationItems
 
-        drawer_layout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+        drawerListener = object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_DRAGGING) {
                     hideKeyboard()
                 }
             }
-        })
+        }
+        drawer_layout.addDrawerListener(drawerListener)
 
         backStackDisposable = backStackPublishSubject.subscribe {
             changeBackStack(it)
@@ -96,6 +99,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         with(headerNavigation) {
             navigation_recyclerView.adapter = null
         }
+        drawer_layout.removeDrawerListener(drawerListener)
         navigationAdapter.clickListener = null
         backStackDisposable.dispose()
         super.onDestroy()
