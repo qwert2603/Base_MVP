@@ -43,10 +43,12 @@ abstract class BasePresenter<M, V : BaseView> {
     protected open val noModel = false
 
     open fun bindView(view: V) {
+        LogUtils.d("$this bindView $view")
         this.view = view
     }
 
     open fun unbindView() {
+        LogUtils.d("$this unbindView")
         if (isViewReady) {
             onViewNotReady()
         }
@@ -57,6 +59,7 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     open fun onViewReady(view: V) {
+        LogUtils.d("$this onViewReady $view")
         isViewReady = true
 
         actionToApplyView.forEach { it(view) }
@@ -66,6 +69,7 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     open fun onViewNotReady() {
+        LogUtils.d("$this onViewNotReady")
         isViewReady = false
         compositeDisposableView.clear()
     }
