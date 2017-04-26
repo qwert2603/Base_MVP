@@ -59,7 +59,7 @@ abstract class BasePresenter<M, V : BaseView> {
     open fun onViewReady(view: V) {
         isViewReady = true
 
-        actionToApplyView.forEach { view.apply(it) }
+        actionToApplyView.forEach { it(view) }
         actionToApplyView.clear()
 
         updateView()
@@ -105,7 +105,7 @@ abstract class BasePresenter<M, V : BaseView> {
 
     protected fun applyViewASAP(action: V.() -> Unit) {
         if (isViewReady) {
-            view?.apply(action)
+            view!!.apply(action)
         } else {
             actionToApplyView.add(action)
         }
