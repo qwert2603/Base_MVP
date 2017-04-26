@@ -104,6 +104,7 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     protected fun applyViewASAP(action: V.() -> Unit) {
+        LogUtils.d("$this applyViewASAP $isViewReady $view")
         if (isViewReady) {
             view!!.apply(action)
         } else {
