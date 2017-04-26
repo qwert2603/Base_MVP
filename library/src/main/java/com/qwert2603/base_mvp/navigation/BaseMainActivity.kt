@@ -74,9 +74,11 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             navigation_recyclerView.layoutManager = LinearLayoutManager(this@BaseMainActivity)
             navigation_recyclerView.adapter = navigationAdapter
         }
-        navigationAdapter.modelList = navigationItems
+        if (navigationAdapter.modelList.isEmpty()) {
+            navigationAdapter.modelList = navigationItems
+        }
 
-        // fixme: memory leak here
+        // fixme: memory leak here (может, это из-за фрагментов во viewPager).
         drawerListener = object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_DRAGGING) {
@@ -88,7 +90,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
         // fixme: memory leak here
         backStackDisposable = backStackPublishSubject.subscribe {
-            changeBackStack(it)
+            fullscreen_FrameLayout.post { changeBackStack(it) }
         }
 
         @Suppress("UNCHECKED_CAST")
