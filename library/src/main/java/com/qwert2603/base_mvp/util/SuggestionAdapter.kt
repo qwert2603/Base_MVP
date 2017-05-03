@@ -19,7 +19,9 @@ class SuggestionAdapter(context: Context, val search: String, suggestions: List<
         val s = getItem(position)
         val spannableStringBuilder = SpannableStringBuilder(s)
         val indexOf = s.indexOf(search)
-        spannableStringBuilder.setSpan(StyleSpan(Typeface.BOLD), indexOf, indexOf + search.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        if (indexOf >= 0) {
+            spannableStringBuilder.setSpan(StyleSpan(Typeface.BOLD), indexOf, indexOf + search.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        }
         view.suggestion_TextView.text = spannableStringBuilder
         return view
     }
