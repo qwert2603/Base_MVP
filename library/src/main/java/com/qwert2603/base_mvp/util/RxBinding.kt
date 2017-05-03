@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.TextView
 import com.qwert2603.base_mvp.R
@@ -74,3 +75,17 @@ fun Consumer<in Int>.toErrorResConsumer(@StringRes errorRes: Int): Consumer<Bool
 
 fun Consumer<in Int>.toErrorColor(resources: Resources): Consumer<Boolean>
         = Consumer { accept(ResourcesCompat.getColor(resources, if (it) R.color.error else android.R.color.black, null)) }
+
+fun AutoCompleteTextView.suggestionsConsumer(): Consumer<List<String>> = Consumer {
+    val s = text.toString()
+    if (it.singleOrNull() == s) {
+        setText(s)
+        setSelection(s.length)
+    }
+    if (it.isNotEmpty()) {
+        setAdapter(SuggestionAdapter(context, s, it))
+        showDropDown()
+    } else {
+        dismissDropDown()
+    }
+}

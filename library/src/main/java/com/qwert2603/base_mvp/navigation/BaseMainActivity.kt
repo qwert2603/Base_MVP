@@ -206,6 +206,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
 
         fragmentTransaction.commitNowAllowingStateLoss()
+
+        LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
     }
 
     override fun navigateTo(backStackItem: BackStackItem, delay: Boolean) {
