@@ -98,6 +98,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         supportFragmentManager.fragments
+                ?.filter { it != null }
                 ?.filter {
                     LogUtils.d("supportFragmentManager.fragments $it ${it.tag !in backStack.map { it.tag }}")
                     it.tag !in backStack.map { it.tag }
