@@ -96,19 +96,6 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         @Suppress("UNCHECKED_CAST")
         backStack = savedInstanceState?.getSerializable(BACK_STACK_KEY) as? List<BackStackItem> ?: createDefaultBackStack()
 
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        supportFragmentManager.fragments
-                ?.filter { it != null }
-                ?.filter {
-                    LogUtils.d("supportFragmentManager.fragments $it ${it.tag !in backStack.map { it.tag }}")
-                    it.tag !in backStack.map { it.tag }
-                }
-                ?.forEach {
-                    LogUtils.d("supportFragmentManager.fragments $it remove")
-                    fragmentTransaction.remove(it)
-                }
-        fragmentTransaction.commitNow()
-
         modifyBackStack(backStack)
     }
 
