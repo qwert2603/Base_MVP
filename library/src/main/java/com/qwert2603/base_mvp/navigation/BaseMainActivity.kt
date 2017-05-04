@@ -98,11 +98,11 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         supportFragmentManager.fragments
-                .filter {
+                ?.filter {
                     LogUtils.d("supportFragmentManager.fragments $it ${it.tag !in backStack.map { it.tag }}")
                     it.tag !in backStack.map { it.tag }
                 }
-                .forEach {
+                ?.forEach {
                     LogUtils.d("supportFragmentManager.fragments $it remove")
                     fragmentTransaction.remove(it)
                 }
