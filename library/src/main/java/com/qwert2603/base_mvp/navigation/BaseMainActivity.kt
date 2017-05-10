@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.os.Bundle
-import android.support.transition.AutoTransition
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -12,6 +11,7 @@ import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.transition.AutoTransition
 import android.transition.Slide
 import android.view.Gravity
 import android.view.View
@@ -168,7 +168,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     if (!backStackItem.fullscreen) {
                         fragment.allowEnterTransitionOverlap = true
                         fragment.allowReturnTransitionOverlap = true
+                        @SuppressLint("NewApi")
                         fragment.sharedElementEnterTransition = AutoTransition()
+                        @SuppressLint("NewApi")
                         fragment.sharedElementReturnTransition = AutoTransition()
                     }
                     fragmentTransaction.add(if (backStackItem.fullscreen) R.id.fullscreen_fragment_container else R.id.fragment_container, fragment, backStackItem.tag)
