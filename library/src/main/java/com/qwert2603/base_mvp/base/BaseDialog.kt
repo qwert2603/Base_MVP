@@ -17,7 +17,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
     protected abstract var presenter: P
 
     abstract val layoutRes: Int
-    lateinit private var dialogView: View
+    lateinit protected var dialogView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
