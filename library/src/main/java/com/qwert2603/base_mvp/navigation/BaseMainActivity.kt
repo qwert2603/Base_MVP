@@ -46,6 +46,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     protected abstract val navigationItems: List<NavigationItem>
 
     protected open fun translateFragmentOnDrawerSlide() = true
+    protected open fun translateFragmentOnDrawerSlideFraction() = 0.26f
 
     private lateinit var backStack: List<BackStackItem>
 
@@ -327,7 +328,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     private fun translateFragment(slideOffset: Float) {
         if (translateFragmentOnDrawerSlide()) {
-            fragment_container.translationX = navigation_view.width * slideOffset * 0.26f
+            fragment_container.translationX = navigation_view.width * slideOffset * translateFragmentOnDrawerSlideFraction()
         }
     }
 }
