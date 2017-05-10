@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.os.Bundle
+import android.support.transition.AutoTransition
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -167,6 +168,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     if (!backStackItem.fullscreen) {
                         fragment.allowEnterTransitionOverlap = true
                         fragment.allowReturnTransitionOverlap = true
+                        fragment.sharedElementEnterTransition = AutoTransition()
+                        fragment.sharedElementReturnTransition = AutoTransition()
                     }
                     fragmentTransaction.add(if (backStackItem.fullscreen) R.id.fullscreen_fragment_container else R.id.fragment_container, fragment, backStackItem.tag)
                     fragmentsToAppear.add(fragment)
