@@ -53,8 +53,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
 
     protected fun createView(): View {
         dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_base, null)
-        dialogView.coordinator.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-        dialogView.coordinator.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialogView.coordinator.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialogView.fragment_base_ViewAnimator.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
         return dialogView
     }
