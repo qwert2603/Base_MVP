@@ -25,6 +25,7 @@ import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
+import com.qwert2603.base_mvp.util.setOnDrawAction
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -43,6 +44,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     protected abstract fun createBackStackForNavigationItem(navigationItemId: Int): List<BackStackItem>
 
     protected abstract val navigationItems: List<NavigationItem>
+
+    protected open fun translateFragmentOnDrawerSlide() = true
 
     private lateinit var backStack: List<BackStackItem>
 
@@ -89,6 +92,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     hideKeyboard()
                 }
             }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                translateFragment(slideOffset)
+            }
         }
         drawer_layout.addDrawerListener(drawerListener)
 
@@ -111,6 +118,13 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         navigationAdapter.clickListener = null
         backStackDisposable.dispose()
         super.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.setOnDrawAction { translateFragment(1f) }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -309,5 +323,11 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             fullscreen_FrameLayout.visibility = View.GONE
             actionOnEnd?.invoke()
         }, millis)
+    }
+
+    private fun translateFragment(slideOffset: Float) {
+        if (translateFragmentOnDrawerSlide()) {
+            fragment_container.translationX = navigation_view.width * slideOffset * 0.26f
+        }
     }
 }
