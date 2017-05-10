@@ -53,6 +53,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     private lateinit var drawerListener: DrawerLayout.SimpleDrawerListener
 
+    private var resumedFragment: BackStackFragment<*, *>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         BaseApplication.baseDiManager.navigationComponent().inject(this@BaseMainActivity)
         super.onCreate(savedInstanceState)
@@ -114,10 +116,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         outState.putSerializable(BACK_STACK_KEY, ArrayList(backStack))
     }
 
-    override fun modifyBackStack(newBackStack: List<BackStackItem>) {
+    override fun modifyBackStack(newBackStack: List<BackStackItem>, sharedElements: List<View>) {
         val oldBackStack = backStack
         backStack = newBackStack
-        backStackPublishSubject.onNext(BackStackChange(oldBackStack, newBackStack))
+        backStackPublishSubject.onNext(BackStackChange(oldBackStack, newBackStack, sharedElements))
     }
 
     private fun changeBackStack(backStackChange: BackStackChange) {
@@ -177,6 +179,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
 
         runOnLollipopOrHigher {
+            backStackChange.sharedElements.forEach { fragmentTransaction.addSharedElement(it, it.transitionName) }
+
             if (backStackChange.from.last().fullscreen || backStackChange.to.last().fullscreen) {
                 (fragmentsToAppear union fragmentsToDisappear)
                         .forEach {
@@ -209,9 +213,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
     }
 
-    override fun navigateTo(backStackItem: BackStackItem, delay: Boolean) {
+    override fun navigateTo(backStackItem: BackStackItem, delay: Boolean, sharedElements: List<View>) {
         LogUtils.d("navigateTo $backStackItem")
-        val action = { modifyBackStack(backStack + backStackItem) }
+        val action = { modifyBackStack(backStack + backStackItem, sharedElements) }
         if (delay) {
             blockUI(150, action)
         } else {
@@ -219,9 +223,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
     }
 
-    override fun removeBackStackItem(backStackItem: BackStackItem) {
+    override fun removeBackStackItem(backStackItem: BackStackItem, sharedElements: List<View>) {
         LogUtils.d("removeBackStackItem $backStackItem")
-        modifyBackStack(backStack.filter { it.tag != backStackItem.tag })
+        modifyBackStack(backStack.filter { it.tag != backStackItem.tag }, sharedElements)
     }
 
     override fun onBackPressed() {
@@ -237,7 +241,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     private fun goBack() {
         closeDrawer()
-        modifyBackStack(backStack.dropLastWhile { it.asNested }.dropLast(1))
+        modifyBackStack(backStack.dropLastWhile { it.asNested }.dropLast(1), resumedFragment?.getSharedElements() ?: emptyList())
     }
 
     override fun onFragmentResumed(fragment: BackStackFragment<*, *>) {
@@ -259,10 +263,13 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     }
                 }
             }
+
+            resumedFragment = fragment
         }
     }
 
     override fun onFragmentPaused(fragment: BackStackFragment<*, *>) {
+        if (resumedFragment === fragment) resumedFragment = null
         fragment.toolbar?.setNavigationOnClickListener(null)
     }
 

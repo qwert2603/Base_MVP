@@ -78,6 +78,8 @@ abstract class BackStackFragment<V : BaseView, out P : BasePresenter<*, V>> : Ba
         focusedEditTextId = null
     }
 
+    open fun getSharedElements(): List<View> = emptyList()
+
     private fun addEditTexts(view: View) {
         when (view) {
             is EditText -> editTexts.add(view)

@@ -1,6 +1,7 @@
 package com.qwert2603.base_mvp.navigation
 
 import android.os.Bundle
+import android.view.View
 import java.io.Serializable
 
 abstract class BackStackItem : Serializable {
@@ -27,4 +28,8 @@ abstract class BackStackItem : Serializable {
     abstract protected fun newInstance(): BackStackFragment<*, *>
 }
 
-class BackStackChange(val from: List<BackStackItem>, val to: List<BackStackItem>)
+class BackStackChange(
+        val from: List<BackStackItem>,
+        val to: List<BackStackItem>,
+        val sharedElements: List<View>
+)
