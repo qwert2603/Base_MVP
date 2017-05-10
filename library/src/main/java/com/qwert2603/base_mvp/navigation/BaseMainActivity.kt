@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -179,7 +180,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
 
         runOnLollipopOrHigher {
-            backStackChange.sharedElements.forEach { fragmentTransaction.addSharedElement(it, it.transitionName) }
+            backStackChange.sharedElements.forEach { fragmentTransaction.addSharedElement(it, ViewCompat.getTransitionName(it)) }
 
             if (backStackChange.from.last().fullscreen || backStackChange.to.last().fullscreen) {
                 (fragmentsToAppear union fragmentsToDisappear)
