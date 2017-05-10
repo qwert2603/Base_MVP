@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.showIfNotYet
+import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.android.synthetic.main.fragment_base.view.*
 import java.util.*
 
@@ -53,7 +53,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
 
     protected fun createView(): View {
         dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_base, null)
-        (view?.findViewById(R.id.fragment_base_ViewAnimator) as? ViewGroup)?.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
+        fragment_base_ViewAnimator.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
         return dialogView
     }
 
