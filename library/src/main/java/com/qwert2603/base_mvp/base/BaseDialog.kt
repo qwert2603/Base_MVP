@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.showIfNotYet
@@ -52,8 +51,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
     }
 
     protected fun createView(): View {
-        dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_base, null)
-        dialogView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_base, null)
         dialogView.fragment_base_ViewAnimator.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
         return dialogView
     }
