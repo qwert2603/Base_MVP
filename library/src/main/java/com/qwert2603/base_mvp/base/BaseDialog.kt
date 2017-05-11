@@ -8,7 +8,7 @@ import android.view.View
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.showIfNotYet
-import kotlinx.android.synthetic.main.fragment_base.view.*
+import kotlinx.android.synthetic.main.dialog_base.view.*
 import java.util.*
 
 abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragment(), BaseView {
@@ -52,28 +52,29 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
 
     protected fun createView(): View {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_base, null)
-        dialogView.fragment_base_ViewAnimator.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
+        dialogView.dialog_base_ViewAnimator.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
+        dialogView.dialog_base_retry_button.setOnClickListener { presenter.onReloadClicked() }
         return dialogView
     }
 
     override fun showProcessingModel(processingModel: Boolean) {
-        dialogView.fragment_base_processingModel_FrameLayout.visibility = if (processingModel) View.VISIBLE else View.GONE
+        dialogView.dialog_base_processingModel_FrameLayout.visibility = if (processingModel) View.VISIBLE else View.GONE
     }
 
     override fun showLayerLoading() {
-        dialogView.fragment_base_ViewAnimator.showIfNotYet(POSITION_LOADING)
+        dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_LOADING)
     }
 
     override fun showLayerLoadingError() {
-        dialogView.fragment_base_ViewAnimator.showIfNotYet(POSITION_LOADING_ERROR)
+        dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_LOADING_ERROR)
     }
 
     override fun showLayerModel() {
-        dialogView.fragment_base_ViewAnimator.showIfNotYet(POSITION_MODEL_VIEWS)
+        dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_MODEL_VIEWS)
     }
 
     override fun showLayerNothing() {
-        dialogView.fragment_base_ViewAnimator.showIfNotYet(POSITION_NOTHING)
+        dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_NOTHING)
     }
 
     override fun setSwipeRefreshConfig(canRefresh: Boolean, refreshing: Boolean) {}
