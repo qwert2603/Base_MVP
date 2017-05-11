@@ -3,6 +3,7 @@ package com.qwert2603.base_mvp.navigation
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -11,8 +12,7 @@ import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.transition.AutoTransition
-import android.transition.Slide
+import android.transition.*
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -183,10 +183,17 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     if (!backStackItem.fullscreen) {
                         fragment.allowEnterTransitionOverlap = true
                         fragment.allowReturnTransitionOverlap = true
-                        @SuppressLint("NewApi")
-                        fragment.sharedElementEnterTransition = AutoTransition()
-                        @SuppressLint("NewApi")
-                        fragment.sharedElementReturnTransition = AutoTransition()
+
+                        val transition: TransitionSet?
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            transition = TransitionSet()
+                                    .addTransition(ChangeImageTransform())
+                                    .addTransition(ChangeBounds())
+                                    .addTransition(ChangeClipBounds())
+                                    .addTransition(ChangeTransform())
+                            fragment.sharedElementEnterTransition = transition
+                            fragment.sharedElementReturnTransition = transition
+                        }
                     }
                     fragmentTransaction.add(if (backStackItem.fullscreen) R.id.fullscreen_fragment_container else R.id.fragment_container, fragment, backStackItem.tag)
                     fragmentsToAppear.add(fragment)
