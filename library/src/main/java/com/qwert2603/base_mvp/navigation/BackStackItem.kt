@@ -11,11 +11,7 @@ abstract class BackStackItem : Serializable {
     }
 
     abstract val tag: String
-
-    /**
-     * Use enter/exit transitions or not.
-     */
-    open val withTransitions = true
+    open val fullscreen = false
 
     /**
      * If true, this BackStackItem doesn't change toolbar icon & title.

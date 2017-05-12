@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
@@ -208,7 +209,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         runOnLollipopOrHigher {
             backStackChange.sharedElements.forEach { fragmentTransaction.addSharedElement(it, ViewCompat.getTransitionName(it)) }
 
-            if (!backStackChange.from.last().withTransitions || !backStackChange.to.last().withTransitions) {
+            if (backStackChange.from.last().fullscreen || backStackChange.to.last().fullscreen) {
                 (fragmentsToAppear union fragmentsToDisappear)
                         .forEach {
                             it.enterTransition = null
@@ -272,7 +273,15 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     override fun onFragmentResumed(fragment: BackStackFragment<*, *>) {
-        if (fragment.getBackStackItem().tag == backStack.last().tag) {
+        val backStackItem = fragment.getBackStackItem()
+        if (backStackItem.tag == backStack.last().tag) {
+            drawer_layout.setDrawerLockMode(if (backStackItem.fullscreen) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = ResourcesCompat.getColor(resources,
+                        if (backStackItem.fullscreen) R.color.fullscreen_status_bar_color else R.color.colorPrimaryDark, null)
+            }
+
             navigationAdapter.selectedItemId = navigationItems.find { it.fragmentClass == fragment.javaClass }?.id ?: 0
 
             fragment.toolbar?.apply {

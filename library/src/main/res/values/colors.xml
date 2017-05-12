@@ -16,4 +16,6 @@
     <color name="navigation_menu_item_tint_selected">@color/colorPrimary</color>
 
     <color name="disabled_button">#999999</color>
+
+    <color name="fullscreen_status_bar_color">#4000</color>
 </resources>
