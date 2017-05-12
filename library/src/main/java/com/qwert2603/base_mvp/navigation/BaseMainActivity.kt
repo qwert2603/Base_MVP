@@ -7,13 +7,15 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.transition.*
+import android.transition.ChangeBounds
+import android.transition.ChangeImageTransform
+import android.transition.Slide
+import android.transition.TransitionSet
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -189,8 +191,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                         val transition = TransitionSet()
                                 .addTransition(ChangeImageTransform())
                                 .addTransition(ChangeBounds())
-                                .addTransition(ChangeClipBounds())
-                                .addTransition(ChangeTransform())
+//                                .addTransition(ChangeClipBounds())
+//                                .addTransition(ChangeTransform())
                         fragment.sharedElementEnterTransition = transition
                         fragment.sharedElementReturnTransition = transition
                     }
@@ -277,10 +279,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         if (backStackItem.tag == backStack.last().tag) {
             drawer_layout.setDrawerLockMode(if (backStackItem.fullscreen) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = ResourcesCompat.getColor(resources,
-                        if (backStackItem.fullscreen) R.color.fullscreen_status_bar_color else R.color.colorPrimaryDark, null)
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                window.statusBarColor = ResourcesCompat.getColor(resources,
+//                        if (backStackItem.fullscreen) R.color.fullscreen_status_bar_color else R.color.colorPrimaryDark, null)
+//            }
 
             navigationAdapter.selectedItemId = navigationItems.find { it.fragmentClass == fragment.javaClass }?.id ?: 0
 
