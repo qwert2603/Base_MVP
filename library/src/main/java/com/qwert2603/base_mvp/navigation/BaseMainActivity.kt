@@ -183,18 +183,18 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     if (!backStackItem.fullscreen) {
                         fragment.allowEnterTransitionOverlap = true
                         fragment.allowReturnTransitionOverlap = true
-
-                        val transition: TransitionSet?
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            transition = TransitionSet()
-                                    .addTransition(ChangeImageTransform())
-                                    .addTransition(ChangeBounds())
-                                    .addTransition(ChangeClipBounds())
-                                    .addTransition(ChangeTransform())
-                            fragment.sharedElementEnterTransition = transition
-                            fragment.sharedElementReturnTransition = transition
-                        }
                     }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        val transition = TransitionSet()
+                                .addTransition(ChangeImageTransform())
+                                .addTransition(ChangeBounds())
+                                .addTransition(ChangeClipBounds())
+                                .addTransition(ChangeTransform())
+                        fragment.sharedElementEnterTransition = transition
+                        fragment.sharedElementReturnTransition = transition
+                    }
+
                     fragmentTransaction.add(if (backStackItem.fullscreen) R.id.fullscreen_fragment_container else R.id.fragment_container, fragment, backStackItem.tag)
                     fragmentsToAppear.add(fragment)
                 }
