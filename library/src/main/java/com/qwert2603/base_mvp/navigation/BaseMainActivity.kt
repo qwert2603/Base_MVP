@@ -7,15 +7,13 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.transition.ChangeBounds
-import android.transition.ChangeImageTransform
-import android.transition.Slide
-import android.transition.TransitionSet
+import android.transition.*
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -63,6 +61,13 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     private lateinit var drawerListener: DrawerLayout.SimpleDrawerListener
 
     private var resumedFragment: BackStackFragment<*, *>? = null
+
+    @SuppressLint("NewApi")
+    protected open fun createSharedElementTransition(): Transition = TransitionSet()
+            .addTransition(ChangeImageTransform())
+            .addTransition(ChangeBounds())
+            .addTransition(ChangeClipBounds())
+            .addTransition(ChangeTransform())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BaseApplication.baseDiManager.navigationComponent().inject(this@BaseMainActivity)
@@ -188,11 +193,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     fragment.allowReturnTransitionOverlap = true
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        val transition = TransitionSet()
-                                .addTransition(ChangeImageTransform())
-                                .addTransition(ChangeBounds())
-//                                .addTransition(ChangeClipBounds())
-//                                .addTransition(ChangeTransform())
+                        val transition = createSharedElementTransition()
                         fragment.sharedElementEnterTransition = transition
                         fragment.sharedElementReturnTransition = transition
                     }
@@ -274,15 +275,21 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         modifyBackStack(backStack.dropLastWhile { it.asNested }.dropLast(1), resumedFragment?.getSharedElements() ?: emptyList())
     }
 
+    private var statusBarColorPrev: Int? = null
+
     override fun onFragmentResumed(fragment: BackStackFragment<*, *>) {
         val backStackItem = fragment.getBackStackItem()
         if (backStackItem.tag == backStack.last().tag) {
             drawer_layout.setDrawerLockMode(if (backStackItem.fullscreen) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED)
 
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                window.statusBarColor = ResourcesCompat.getColor(resources,
-//                        if (backStackItem.fullscreen) R.color.fullscreen_status_bar_color else R.color.colorPrimaryDark, null)
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (backStackItem.fullscreen) {
+                    statusBarColorPrev = window.statusBarColor
+                    window.statusBarColor = ResourcesCompat.getColor(resources, R.color.fullscreen_status_bar_color, null)
+                } else {
+                    statusBarColorPrev?.let { window.statusBarColor = it }
+                }
+            }
 
             navigationAdapter.selectedItemId = navigationItems.find { it.fragmentClass == fragment.javaClass }?.id ?: 0
 
