@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
@@ -215,8 +214,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             if (backStackChange.from.last().fullscreen || backStackChange.to.last().fullscreen) {
                 (fragmentsToAppear union fragmentsToDisappear)
                         .forEach {
-                            it.enterTransition = null
-                            it.exitTransition = null
+                            @SuppressLint("NewApi")
+                            it.enterTransition = Fade()
+                            @SuppressLint("NewApi")
+                            it.exitTransition = Fade()
                         }
             } else {
                 (fragmentsToAppear - fragmentsToDisappear)
@@ -275,21 +276,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         modifyBackStack(backStack.dropLastWhile { it.asNested }.dropLast(1), resumedFragment?.getSharedElements() ?: emptyList())
     }
 
-    private var statusBarColorPrev: Int? = null
-
     override fun onFragmentResumed(fragment: BackStackFragment<*, *>) {
         val backStackItem = fragment.getBackStackItem()
         if (backStackItem.tag == backStack.last().tag) {
             drawer_layout.setDrawerLockMode(if (backStackItem.fullscreen) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (backStackItem.fullscreen) {
-                    statusBarColorPrev = window.statusBarColor
-                    window.statusBarColor = ResourcesCompat.getColor(resources, R.color.fullscreen_status_bar_color, null)
-                } else {
-                    statusBarColorPrev?.let { window.statusBarColor = it }
-                }
-            }
 
             navigationAdapter.selectedItemId = navigationItems.find { it.fragmentClass == fragment.javaClass }?.id ?: 0
 
