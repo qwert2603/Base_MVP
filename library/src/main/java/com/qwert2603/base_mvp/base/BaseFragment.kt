@@ -64,8 +64,6 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
                 ContextCompat.getColor(activity, R.color.colorPrimaryDark)
         )
         swipeRefreshLayout()?.setOnRefreshListener { presenter.onReloadClicked() }
-
-        startPostponedEnterTransition()
     }
 
     override fun onResume() {
@@ -80,8 +78,6 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
     }
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        postponeEnterTransition()
-
         val view = container?.inflate(R.layout.fragment_base)
         (view?.findViewById(R.id.fragment_base_ViewAnimator) as? ViewGroup)?.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
         if (toolbarRes != 0) (view?.findViewById(R.id.baseFragment_AppBarLayout) as? ViewGroup)?.inflate(toolbarRes, true)
