@@ -180,10 +180,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                     }
                 } else {
                     fragment = backStackItem.createFragment()
-                    if (!backStackItem.fullscreen) {
-                        fragment.allowEnterTransitionOverlap = true
-                        fragment.allowReturnTransitionOverlap = true
-                    }
+
+                    fragment.allowEnterTransitionOverlap = true
+                    fragment.allowReturnTransitionOverlap = true
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         val transition = TransitionSet()
@@ -195,7 +194,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                         fragment.sharedElementReturnTransition = transition
                     }
 
-                    fragmentTransaction.add(if (backStackItem.fullscreen) R.id.fullscreen_fragment_container else R.id.fragment_container, fragment, backStackItem.tag)
+                    fragmentTransaction.add(R.id.fragment_container, fragment, backStackItem.tag)
                     fragmentsToAppear.add(fragment)
                 }
             } else {
@@ -209,7 +208,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         runOnLollipopOrHigher {
             backStackChange.sharedElements.forEach { fragmentTransaction.addSharedElement(it, ViewCompat.getTransitionName(it)) }
 
-            if (backStackChange.from.last().fullscreen || backStackChange.to.last().fullscreen) {
+            if (!backStackChange.from.last().withTransitions || !backStackChange.to.last().withTransitions) {
                 (fragmentsToAppear union fragmentsToDisappear)
                         .forEach {
                             it.enterTransition = null

@@ -16,12 +16,14 @@
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/coordinator"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
             <FrameLayout
                 android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true" />
 
         </android.support.design.widget.CoordinatorLayout>
 
@@ -34,12 +36,6 @@
             android:fitsSystemWindows="true" />
 
     </android.support.v4.widget.DrawerLayout>
-
-    <FrameLayout
-        android:id="@+id/fullscreen_fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" />
 
     <FrameLayout
         android:id="@+id/fullscreen_FrameLayout"
