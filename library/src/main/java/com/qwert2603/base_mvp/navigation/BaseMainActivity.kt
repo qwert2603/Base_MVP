@@ -149,6 +149,11 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     private fun changeBackStack(backStackChange: BackStackChange) {
         LogUtils.d("changeBackStack ${backStackChange.from.map { it.tag }} ${backStackChange.to.map { it.tag }}")
 
+        if (isDestroyed) {
+            LogUtils.d("changeBackStack isDestroyed return")
+            return
+        }
+
         if (backStackChange.to.isEmpty()) {
             finish()
             return
