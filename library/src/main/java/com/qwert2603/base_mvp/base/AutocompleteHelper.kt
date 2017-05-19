@@ -36,8 +36,13 @@ class AutocompleteHelper<T>(
                         if (search.isBlank()) {
                             return@switchMap Observable.just<List<String>>(emptyList())
                         }
-                        getSuggestionsFromModel()?.firstOrNull { nameSuggestionObject(it) == search }
+                        getSuggestionsFromModel()
+                                ?.firstOrNull {
+                                    LogUtils.d("AutocompleteHelper firstOrNull $search $it ${nameSuggestionObject(it) == search}")
+                                    nameSuggestionObject(it) == search
+                                }
                                 ?.let {
+                                    LogUtils.d("AutocompleteHelper setSuggestionToModel $it")
                                     setSuggestionToModel(it)
                                     return@switchMap Observable.just<List<String>>(emptyList())
                                 }
