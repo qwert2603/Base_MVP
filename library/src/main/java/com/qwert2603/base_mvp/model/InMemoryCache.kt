@@ -11,6 +11,8 @@ open class InMemoryCache<K, T>(val keySelector: (T) -> K) {
 
     fun clear() = cache.clear()
 
+    fun remove(k: K) = cache.remove(k)
+
     override fun toString() = cache.toString()
 }
 
