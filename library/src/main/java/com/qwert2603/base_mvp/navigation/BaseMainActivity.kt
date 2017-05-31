@@ -46,7 +46,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     protected abstract val navigationItems: List<NavigationItem>
 
     protected open fun translateFragmentOnDrawerSlide() = true
-    protected open fun translateFragmentOnDrawerSlideFraction() = 0.26f
+    protected open fun translateFragmentOnDrawerSlideFraction() = 0.23f
 
     private lateinit var backStack: List<BackStackItem>
 
@@ -130,8 +130,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     override fun onResume() {
         super.onResume()
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.setOnDrawAction { translateFragment(1f) }
+        drawer_layout.setOnDrawAction {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                translateFragment(1f)
+            }
         }
     }
 
