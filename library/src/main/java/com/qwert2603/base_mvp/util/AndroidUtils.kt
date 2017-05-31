@@ -10,11 +10,12 @@ fun runOnLollipopOrHigher(action: () -> Unit) {
     }
 }
 
-fun View.setOnDrawAction(action: () -> Unit) {
-    viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
-        override fun onDraw() {
-            viewTreeObserver.removeOnDrawListener(this)
+fun View.setOnPreDrawAction(action: () -> Unit) {
+    viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+        override fun onPreDraw(): Boolean {
+            viewTreeObserver.removeOnPreDrawListener(this)
             action()
+            return true
         }
     })
 }

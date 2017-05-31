@@ -22,10 +22,7 @@ import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
-import com.qwert2603.base_mvp.util.LogUtils
-import com.qwert2603.base_mvp.util.inflate
-import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
-import com.qwert2603.base_mvp.util.setOnDrawAction
+import com.qwert2603.base_mvp.util.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -130,7 +127,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     override fun onResume() {
         super.onResume()
-        drawer_layout.setOnDrawAction {
+        drawer_layout.setOnPreDrawAction {
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 translateFragment(1f)
             }
