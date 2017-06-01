@@ -271,7 +271,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         if (closeDrawer()) {
             return
         }
-        if (resumedFragment?.isBackPressWillBeConsumed() ?: false) {
+        if (resumedFragment?.isBackPressConsumed() ?: false) {
             return
         }
         if (backStack.dropLastWhile { it.asNested }.size > 1) {

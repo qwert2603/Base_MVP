@@ -80,7 +80,7 @@ abstract class BackStackFragment<V : BaseView, out P : BasePresenter<*, V>> : Ba
 
     open fun getSharedElements(): List<View> = emptyList()
 
-    open fun isBackPressWillBeConsumed() = false
+    open fun isBackPressConsumed() = false
 
     private fun addEditTexts(view: View) {
         when (view) {
