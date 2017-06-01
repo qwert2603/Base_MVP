@@ -9,7 +9,7 @@ import com.qwert2603.base_mvp.BaseApplication
 import io.reactivex.Single
 import javax.inject.Inject
 
-class BasePreferenceHelper {
+open class BasePreferenceHelper {
 
     class KeyValueHelper<T>(
             val clazz: Class<T>,
