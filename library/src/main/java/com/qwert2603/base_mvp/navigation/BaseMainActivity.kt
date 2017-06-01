@@ -272,7 +272,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             return
         }
         if (resumedFragment?.isBackPressWillBeConsumed() ?: false) {
-            super.onBackPressed()
+            return
         }
         if (backStack.dropLastWhile { it.asNested }.size > 1) {
             goBack()
