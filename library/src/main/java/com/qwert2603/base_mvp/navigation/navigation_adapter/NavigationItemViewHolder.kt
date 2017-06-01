@@ -15,7 +15,7 @@ class NavigationItemViewHolder(itemView: View)
     @Inject lateinit override var presenter: NavigationItemPresenter
 
     init {
-        BaseApplication.baseDiManager.navigationComponent().inject(this@NavigationItemViewHolder)
+        BaseApplication.baseDiManager.navigationComponent.inject(this@NavigationItemViewHolder)
     }
 
     override fun bindPresenter() {

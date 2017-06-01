@@ -66,7 +66,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             .addTransition(ChangeTransform())
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        BaseApplication.baseDiManager.navigationComponent().inject(this@BaseMainActivity)
+        BaseApplication.baseDiManager.navigationComponent.inject(this@BaseMainActivity)
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
