@@ -22,7 +22,10 @@ import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
-import com.qwert2603.base_mvp.util.*
+import com.qwert2603.base_mvp.util.LogUtils
+import com.qwert2603.base_mvp.util.inflate
+import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
+import com.qwert2603.base_mvp.util.setOnPreDrawAction
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -267,6 +270,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     override fun onBackPressed() {
         if (closeDrawer()) {
             return
+        }
+        if (resumedFragment?.isBackPressWillBeConsumed() ?: false) {
+            super.onBackPressed()
         }
         if (backStack.dropLastWhile { it.asNested }.size > 1) {
             goBack()
