@@ -18,6 +18,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.qwert2603.base_mvp.BaseApplication
+import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
@@ -36,7 +37,7 @@ import javax.inject.Inject
 abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     companion object {
-        private const val BACK_STACK_KEY = "com.qwert2603.base_mvp.navigation.BACK_STACK_KEY"
+        private const val BACK_STACK_KEY = BuildConfig.APPLICATION_ID + "BACK_STACK_KEY"
     }
 
     protected abstract fun createDefaultBackStack(): List<BackStackItem>
