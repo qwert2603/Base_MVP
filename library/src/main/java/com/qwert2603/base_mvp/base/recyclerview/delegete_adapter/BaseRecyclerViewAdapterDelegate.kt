@@ -2,9 +2,7 @@ package com.qwert2603.base_mvp.base.recyclerview.delegete_adapter
 
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewAdapter
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewHolder
-import com.qwert2603.base_mvp.model.IdentifiableLong
 
-abstract class BaseRecyclerViewAdapterDelegate<M>
-    : BaseRecyclerViewAdapter<M, BaseRecyclerViewHolder<M, *, *>>() where M : IdentifiableLong, M : ViewType {
+abstract class BaseRecyclerViewAdapterDelegate : BaseRecyclerViewAdapter<ViewType, BaseRecyclerViewHolder<ViewType, *, *>>() {
     override fun getItemViewType(position: Int) = modelList[position].viewType
 }
