@@ -33,8 +33,17 @@ abstract class ListViewImpl<T : IdentifiableLong, V : ListView<T>, out P : ListP
         super.onViewCreated()
 
         list_recyclerView.layoutManager = createLayoutManager()
-        list_recyclerView.adapter = adapter
         (list_recyclerView.layoutManager as? LinearLayoutManager)?.initialPrefetchItemCount = 6
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        list_recyclerView.adapter = adapter
+    }
+
+    override fun onDetachedFromWindow() {
+        list_recyclerView.apply { postDelayed({ adapter = null }, 2000) }
+        super.onDetachedFromWindow()
     }
 
     override fun showEmpty() {
