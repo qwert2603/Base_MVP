@@ -16,6 +16,7 @@ abstract class SaveBitmapFragment<V : BaseView, out P : BasePresenter<*, V>> : B
         super.onPause()
 
         val view = view.let { it ?: return }
+        if (view.width <= 0 || view.height <= 0) return
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         view.layout(0, 0, view.width, view.height)
