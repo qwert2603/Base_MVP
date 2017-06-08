@@ -11,6 +11,7 @@ class AutocompleteHelper<T>(
         val filter: () -> Boolean,
         val textChanges: Observable<String>,
         val showAllClicks: Observable<Any>,
+        val cancelPrevious: Observable<Any>,
         val suggestionsSource: (String) -> Single<List<T>>,
         val allSuggestionsSource: () -> Single<List<T>>,
         val nameSuggestionObject: (T) -> String,
@@ -21,17 +22,23 @@ class AutocompleteHelper<T>(
         val setSuggestionToModel: (T?) -> Unit
 ) {
     private data class SearchParams(
+            val cancelPrevious: Boolean,
             val showAll: Boolean,
             val search: String
     )
 
     fun subscribe(): Disposable {
         return Observable.merge(
-                textChanges.map { SearchParams(false, it) },
-                showAllClicks.map { SearchParams(true, "") }
+                textChanges.map { SearchParams(false, false, it) },
+                showAllClicks.map { SearchParams(false, true, "") },
+                cancelPrevious.map { SearchParams(true, false, "") }
         )
                 .filter { filter() }
-                .switchMap { (showAll, search) ->
+                .switchMap { (cancelPrevious, showAll, search) ->
+                    LogUtils.d("_AutocompleteHelper $cancelPrevious $showAll $search")
+                    if (cancelPrevious) {
+                        return@switchMap Observable.just<List<String>>(emptyList())
+                    }
                     if (!showAll) {
                         if (search.isBlank()) {
                             return@switchMap Observable.just<List<String>>(emptyList())
