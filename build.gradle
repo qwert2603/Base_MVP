@@ -16,8 +16,7 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenCentral()
-        maven { url "http://repository.jetbrains.com/all" }
+        jcenter()
     }
 }
 
