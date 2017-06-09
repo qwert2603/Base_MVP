@@ -50,7 +50,7 @@ open class BasePreferenceHelper {
 
     @Inject lateinit var context: Context
 
-    protected val preferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+    protected val defaultPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
     protected val gson: Gson = GsonBuilder().create()
 
