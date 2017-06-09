@@ -10,7 +10,7 @@ import com.qwert2603.base_mvp.util.inflate
 import kotlinx.android.synthetic.main.item_selecting.view.*
 import java.util.*
 
-abstract class SelectingRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerViewHolder<M, *, *>> : BaseRecyclerViewAdapter<M, VH>() {
+abstract class SelectingRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerViewHolder<M>> : BaseRecyclerViewAdapter<M, VH>() {
 
     interface SelectionListener {
         fun onSelectionChanged(id: Long, selected: Boolean)
@@ -49,7 +49,7 @@ abstract class SelectingRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyc
         val viewHolder = onCreateSelectingViewHolder(view, viewType)
         with(view) {
             selection_check_box.setOnCheckedChangeListener { _, checked ->
-                val id = viewHolder.getItemId()
+                val id = viewHolder.itemId
                 if (checked) {
                     selectedIds.add(id)
                 } else {

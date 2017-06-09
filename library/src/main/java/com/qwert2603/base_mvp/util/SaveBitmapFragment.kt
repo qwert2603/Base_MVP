@@ -4,11 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import com.qwert2603.base_mvp.base.BaseFragment
 import com.qwert2603.base_mvp.base.BasePresenter
 import com.qwert2603.base_mvp.base.BaseView
-import com.qwert2603.base_mvp.navigation.BackStackFragment
+import com.qwert2603.base_mvp.base.BaseViewStateContainer
 
-abstract class SaveBitmapFragment<V : BaseView, out P : BasePresenter<*, V>> : BackStackFragment<V, P>() {
+abstract class SaveBitmapFragment<VS : BaseViewStateContainer, V : BaseView<VS>, P : BasePresenter<V, VS>> : BaseFragment<VS, V, P>() {
     private var prevBackground: Drawable? = null
     private var everPaused = false
 

@@ -7,15 +7,15 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import android.widget.ViewAnimator
+import com.qwert2603.base_mvp.base.BaseFragment
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewAdapter
-import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewHolder
 import com.qwert2603.base_mvp.model.IdentifiableLong
-import com.qwert2603.base_mvp.navigation.BackStackFragment
 import com.qwert2603.base_mvp.util.showIfNotYet
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_list.*
 
-abstract class ListFragment<T : IdentifiableLong, V : ListView<T>, out P : ListPresenter<T, *, V>>
-    : BackStackFragment<V, P>(), ListView<T> {
+abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong, V : ListView<T, VS>, P : ListPresenter<T, V, VS>>
+    : BaseFragment<VS, V, P>(), ListView<T, VS> {
 
     companion object ViewAnimatorPositions {
         private const val POSITION_EMPTY = 0
@@ -42,33 +42,31 @@ abstract class ListFragment<T : IdentifiableLong, V : ListView<T>, out P : ListP
         super.onDestroyView()
     }
 
-    override fun showEmpty() {
-        list_ViewAnimator.showIfNotYet(POSITION_EMPTY)
+    override fun render(vs: VS) {
+        super.render(vs)
+
+        val listViewState = vs.listViewState
+        if (listViewState.listState == ListState.ITEMS) {
+            adapter.modelList = listViewState.list
+        }
+        list_ViewAnimator.showIfNotYet(when (listViewState.listState) {
+            ListState.EMPTY -> POSITION_EMPTY
+            ListState.NOTHING_FOUND -> POSITION_NOTHING_FOUND
+            ListState.ITEMS -> POSITION_LIST
+        })
+        if (listViewState.scrollToTop) {
+            list_recyclerView.apply { post { scrollToPosition(0) } }
+        }
     }
 
-    override fun showNothingFound() {
-        list_ViewAnimator.showIfNotYet(POSITION_NOTHING_FOUND)
+    override fun itemClicks(): Observable<Long> {
+        //todo
+        TODO()
     }
 
-    override fun showList(list: List<T>) {
-        adapter.modelList = list
-        list_ViewAnimator.showIfNotYet(POSITION_LIST)
-    }
-
-    override fun updateItem(id: Long) {
-        (list_recyclerView.findViewHolderForItemId(id) as? BaseRecyclerViewHolder<*, *, *>)?.updateView()
-    }
-
-    override fun updateVisibleItems() {
-        (0..list_recyclerView.childCount)
-                .map { list_recyclerView.getChildAt(it) }
-                .filter { it != null }
-                .map { list_recyclerView.getChildViewHolder(it) }
-                .forEach { (it as? BaseRecyclerViewHolder<*, *, *>)?.updateView() }
-    }
-
-    override fun scrollToTop() {
-        list_recyclerView.apply { post { scrollToPosition(0) } }
+    override fun itemLongClicks(): Observable<Long> {
+        //todo
+        TODO()
     }
 
     val _list_recyclerView: RecyclerView get() = list_recyclerView

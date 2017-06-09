@@ -8,18 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.EditText
-import com.qwert2603.base_mvp.base.BaseFragment
-import com.qwert2603.base_mvp.base.BasePresenter
-import com.qwert2603.base_mvp.base.BaseView
+import com.hannesdorfmann.mosby3.mvi.MviFragment
+import com.hannesdorfmann.mosby3.mvi.MviPresenter
+import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.qwert2603.base_mvp.util.LogUtils
 
-abstract class BackStackFragment<V : BaseView, out P : BasePresenter<*, V>> : BaseFragment<V, P>() {
+abstract class BackStackFragment<V : MvpView, P : MviPresenter<V, *>> : MviFragment<V, P>() {
     fun getBackStackItem(): BackStackItem = arguments.getSerializable(BackStackItem.BACK_STACK_ITEM_KEY) as BackStackItem
 
     abstract fun title(): String
 
     open val closable = false
 
+    //todo: check if code with EditText and keyboard hide/show is correct.
     private val editTexts: MutableList<EditText> = mutableListOf()
     @IdRes private var focusedEditTextId: Int? = null
 

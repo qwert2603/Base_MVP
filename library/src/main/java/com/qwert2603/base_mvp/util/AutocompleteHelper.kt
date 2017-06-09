@@ -1,7 +1,5 @@
-package com.qwert2603.base_mvp.base
+package com.qwert2603.base_mvp.util
 
-import com.qwert2603.base_mvp.util.LogUtils
-import com.qwert2603.base_mvp.util.mapList
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable

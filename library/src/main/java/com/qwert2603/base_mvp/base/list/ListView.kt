@@ -1,14 +1,11 @@
 package com.qwert2603.base_mvp.base.list
 
 import com.qwert2603.base_mvp.base.BaseView
+import io.reactivex.Observable
 
-interface ListView<in T> : BaseView {
-    fun showEmpty()
-    fun showNothingFound()
-    fun showList(list: List<T>)
+interface ListView<out T, in VS : ListViewStateContainer<T>> : BaseView<VS> {
 
-    fun updateItem(id: Long)
-    fun updateVisibleItems()
-
-    fun scrollToTop()
+    //todo: do we need them?
+    fun itemClicks(): Observable<Long>
+    fun itemLongClicks(): Observable<Long>
 }

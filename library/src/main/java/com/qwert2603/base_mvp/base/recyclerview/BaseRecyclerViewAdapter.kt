@@ -8,7 +8,7 @@ import com.qwert2603.base_mvp.model.IdentifiableLong
 import com.qwert2603.base_mvp.util.LogUtils
 import java.util.*
 
-abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerViewHolder<M, *, *>> : RecyclerView.Adapter<VH>() {
+abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerViewHolder<M>> : RecyclerView.Adapter<VH>() {
 
     open var modelList: List<M> = emptyList()
         set(value) {
@@ -47,9 +47,8 @@ abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerVi
             diffResult.dispatchUpdatesTo(this@BaseRecyclerViewAdapter)
         }
 
-    var clickListener: ClickListener? = null
-
-    var longClickListener: LongClickListener? = null
+    var clickListener: ((Long) -> Unit)? = null
+    var longClickListener: ((Long) -> Unit)? = null
 
     init {
         setHasStableIds(true)
@@ -62,8 +61,7 @@ abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerVi
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.adapter = this
         val model = modelList[position]
-        holder.bindPresenter()
-        holder.setModel(model)
+        holder.bind(model)
     }
 
     override fun getItemCount(): Int {
@@ -72,17 +70,5 @@ abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerVi
 
     override fun getItemId(position: Int): Long {
         return modelList[position].id
-    }
-
-    override fun onViewRecycled(holder: VH) {
-        super.onViewRecycled(holder)
-        holder.unbindPresenter()
-        holder.setModel(null)
-    }
-
-    override fun onFailedToRecycleView(holder: VH): Boolean {
-        holder.unbindPresenter()
-        holder.setModel(null)
-        return super.onFailedToRecycleView(holder)
     }
 }

@@ -20,7 +20,6 @@ import android.widget.EditText
 import com.qwert2603.base_mvp.BaseApplication
 import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
-import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
 import com.qwert2603.base_mvp.util.LogUtils
@@ -78,13 +77,11 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         headerNavigation = navigation_view.inflate(R.layout.header_navigation)
         navigation_view.addHeaderView(headerNavigation)
 
-        navigationAdapter.clickListener = object : ClickListener {
-            override fun onItemClicked(itemId: Long) {
-                blockUI(70, {
-                    closeDrawer()
-                    modifyBackStack(createBackStackForNavigationItem(itemId.toInt()))
-                })
-            }
+        navigationAdapter.clickListener = {
+            blockUI(70, {
+                closeDrawer()
+                modifyBackStack(createBackStackForNavigationItem(it.toInt()))
+            })
         }
         with(headerNavigation) {
             navigation_recyclerView.layoutManager = LinearLayoutManager(this@BaseMainActivity)

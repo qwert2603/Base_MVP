@@ -1,13 +1,12 @@
 package com.qwert2603.base_mvp.base
 
-interface BaseView {
-    fun showLayerLoading()
-    fun showLayerLoadingError()
-    fun showLayerModel()
-    fun showLayerNothing()
+import com.hannesdorfmann.mosby3.mvp.MvpView
+import io.reactivex.Observable
+import io.reactivex.Single
 
-    fun showProcessingModel(processingModel: Boolean)
+interface BaseView<in VS : BaseViewStateContainer> : MvpView {
+    fun render(vs: VS)
 
-    fun setSwipeRefreshConfig(canRefresh: Boolean, refreshing: Boolean)
-    fun notifyRefreshingError()
+    fun load(): Single<Any>
+    fun refresh(): Observable<Any>
 }

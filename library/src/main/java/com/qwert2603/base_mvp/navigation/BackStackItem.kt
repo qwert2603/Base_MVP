@@ -2,12 +2,13 @@ package com.qwert2603.base_mvp.navigation
 
 import android.os.Bundle
 import android.view.View
+import com.qwert2603.base_mvp.BuildConfig
 import java.io.Serializable
 
 abstract class BackStackItem : Serializable {
 
     companion object {
-        const val BACK_STACK_ITEM_KEY = "com.qwert2603.base_mvp.navigation.BACK_STACK_ITEM_KEY"
+        const val BACK_STACK_ITEM_KEY = BuildConfig.APPLICATION_ID + "BACK_STACK_ITEM_KEY"
     }
 
     abstract val tag: String

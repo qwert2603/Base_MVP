@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.Toolbar
@@ -14,15 +13,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.ViewAnimator
+import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
 import com.qwert2603.base_mvp.util.showIfNotYet
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.android.synthetic.main.toolbar_default.*
 
-abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragment(), BaseView {
+abstract class BaseFragment<VS : BaseViewStateContainer, V : BaseView<VS>, P : BasePresenter<V, VS>> : MviFragment<V, P>(), BaseView<VS> {
 
     companion object ViewAnimatorPositions {
         private const val POSITION_LOADING = 0
@@ -31,50 +34,25 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
         private const val POSITION_MODEL_VIEWS = 3
     }
 
-    protected abstract val presenter: P
-
-    abstract val layoutRes: Int
+    protected abstract val layoutRes: Int
     open protected val toolbarRes = R.layout.toolbar_default
 
     open protected fun swipeRefreshLayout(): SwipeRefreshLayout? = null
     open protected fun viewForSnackbar(): View = fragment_base_ViewAnimator
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-        @Suppress("UNCHECKED_CAST")
-        presenter.bindView(this as V)
-        LogUtils.d("BaseFragment ${hashCode()} ${this.javaClass} onCreate")
-    }
-
-    override fun onDestroy() {
-        LogUtils.d("BaseFragment ${hashCode()} ${this.javaClass} onDestroy")
-        presenter.unbindView()
-        super.onDestroy()
-    }
+    private lateinit var refreshSubject: PublishSubject<Any>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         LogUtils.d("onViewCreated ${hashCode()} $this")
 
-        fragment_base_retry_button.setOnClickListener { presenter.onReloadClicked() }
+        fragment_base_retry_button.setOnClickListener { refreshSubject.onNext(Any()) }
 
         swipeRefreshLayout()?.setColorSchemeColors(
                 ContextCompat.getColor(activity, R.color.colorPrimary),
                 ContextCompat.getColor(activity, R.color.colorPrimaryDark)
         )
-        swipeRefreshLayout()?.setOnRefreshListener { presenter.onReloadClicked() }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        @Suppress("UNCHECKED_CAST")
-        presenter.onViewReady(this as V)
-    }
-
-    override fun onPause() {
-        presenter.onViewNotReady()
-        super.onPause()
+        swipeRefreshLayout()?.setOnRefreshListener { refreshSubject.onNext(Any()) }
     }
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,44 +65,37 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
             (view as ViewGroup).isTransitionGroup = true
         }
 
+        refreshSubject = PublishSubject.create()
+
         return view
     }
 
-    override fun showProcessingModel(processingModel: Boolean) {
-        fragment_base_processingModel_FrameLayout.visibility = if (processingModel) View.VISIBLE else View.GONE
-    }
-
-    override fun showLayerLoading() {
-        fragment_base_ViewAnimator.showIfNotYet(POSITION_LOADING)
-    }
-
-    override fun showLayerLoadingError() {
-        fragment_base_ViewAnimator.showIfNotYet(POSITION_LOADING_ERROR)
-    }
-
-    override fun showLayerModel() {
-        fragment_base_ViewAnimator.showIfNotYet(POSITION_MODEL_VIEWS)
-    }
-
-    override fun showLayerNothing() {
-        fragment_base_ViewAnimator.showIfNotYet(POSITION_NOTHING)
-    }
-
-    override fun setSwipeRefreshConfig(canRefresh: Boolean, refreshing: Boolean) {
-        swipeRefreshLayout()?.isEnabled = canRefresh
-        swipeRefreshLayout()?.isRefreshing = refreshing
-    }
-
-    override fun notifyRefreshingError() {
-        val snackbar = Snackbar.make(viewForSnackbar(), R.string.refreshing_error_text, Snackbar.LENGTH_SHORT)
-                .setAction(R.string.retry_text, { presenter.onReloadClicked() })
-        snackbar.addCallback(object : Snackbar.Callback() {
-            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                onLoadingErrorSnackbarDismissed()
-            }
+    override fun render(vs: VS) {
+        val baseViewState = vs.baseViewState
+        fragment_base_ViewAnimator.showIfNotYet(when (baseViewState.viewLayer) {
+            ViewLayer.LOADING -> POSITION_LOADING
+            ViewLayer.ERROR -> POSITION_LOADING_ERROR
+            ViewLayer.MODEL -> POSITION_MODEL_VIEWS
+            ViewLayer.NOTHING -> POSITION_NOTHING
         })
-        snackbar.show()
+        fragment_base_processingModel_FrameLayout.visibility = if (baseViewState.processingModel) View.VISIBLE else View.GONE
+        swipeRefreshLayout()?.isEnabled = baseViewState.refreshingConfig.canRefresh
+        swipeRefreshLayout()?.isRefreshing = baseViewState.refreshingConfig.refreshing
+        if (baseViewState.refreshingError) {
+            val snackbar = Snackbar.make(viewForSnackbar(), R.string.refreshing_error_text, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.retry_text, { refreshSubject.onNext(Any()) })
+            snackbar.addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    onLoadingErrorSnackbarDismissed()
+                }
+            })
+            snackbar.show()
+        }
     }
+
+    override fun load(): Single<Any> = Single.just(Any())
+
+    override fun refresh(): Observable<Any> = refreshSubject
 
     protected open fun onLoadingErrorSnackbarDismissed() {}
 
