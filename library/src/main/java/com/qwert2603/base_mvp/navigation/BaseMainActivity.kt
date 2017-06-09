@@ -109,11 +109,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         drawer_layout.addDrawerListener(drawerListener)
 
         // fixme: memory leak here
-        backStackDisposable = backStackPublishSubject.subscribe {
-            //            fullscreen_FrameLayout.post {
-            changeBackStack(it)
-            //            }
-        }
+        backStackDisposable = backStackPublishSubject.subscribe { changeBackStack(it) }
 
         @Suppress("UNCHECKED_CAST")
         backStack = savedInstanceState?.getSerializable(BACK_STACK_KEY) as? List<BackStackItem> ?: createDefaultBackStack()
