@@ -251,7 +251,6 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }
 
         fragmentTransaction.commitAllowingStateLoss()
-        supportFragmentManager.executePendingTransactions()
 
         LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
     }
