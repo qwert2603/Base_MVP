@@ -26,7 +26,7 @@ kapt {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-//    compile "com.hannesdorfmann.mosby3:mvi:3.0.4"
+    compile "com.hannesdorfmann.mosby3:mvi:3.0.4"
 
     ext.support_version = '25.3.1'
     compile "com.android.support:appcompat-v7:$support_version"
