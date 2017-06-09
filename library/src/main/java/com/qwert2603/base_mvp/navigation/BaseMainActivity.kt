@@ -110,7 +110,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
         // fixme: memory leak here
         backStackDisposable = backStackPublishSubject.subscribe {
-            fullscreen_FrameLayout.post { changeBackStack(it) }
+            //            fullscreen_FrameLayout.post {
+            changeBackStack(it)
+            //            }
         }
 
         @Suppress("UNCHECKED_CAST")
