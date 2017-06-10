@@ -21,8 +21,8 @@ interface ListViewStateContainer<out T> : BaseViewStateContainer {
 
 interface ListStatePartialChanges : BaseStatePartialChanges {
     class LayerEmpty : ListStatePartialChanges
-    class LayerNothingFound(val error: Throwable) : ListStatePartialChanges
-    class LayerItems<out T>(val items: List<T>) : BaseStatePartialChanges.LayerModel<List<T>>(items)
+    class LayerNothingFound : ListStatePartialChanges
+    class LayerItems<out T>(val items: List<T>) : ListStatePartialChanges
 
-    class ScrollToTop(val scrollToTop: Boolean)
+    class ScrollToTop(val scrollToTop: Boolean) : ListStatePartialChanges
 }

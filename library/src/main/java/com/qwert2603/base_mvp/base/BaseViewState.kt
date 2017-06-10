@@ -27,7 +27,7 @@ interface BaseViewStateContainer {
 interface BaseStatePartialChanges {
     class LayerLoading : BaseStatePartialChanges
     class LayerError(val error: Throwable) : BaseStatePartialChanges
-    open class LayerModel<out M>(val model: M) : BaseStatePartialChanges
+    class LayerModel : BaseStatePartialChanges
     class LayerNothing : BaseStatePartialChanges
 
     class ProcessingModel(val processing: Boolean)
