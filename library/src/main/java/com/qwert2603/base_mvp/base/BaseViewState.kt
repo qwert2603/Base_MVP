@@ -24,9 +24,13 @@ interface BaseViewStateContainer {
     val baseViewState: BaseViewState
 }
 
-sealed class PartialStateChanges {
-    class LayerLoading : PartialStateChanges()
-    class LayerError(val error: Throwable) : PartialStateChanges()
-    class LayerModel<out M>(val model: M) : PartialStateChanges()
-    class LayerNothing : PartialStateChanges()
+interface BaseStatePartialChanges {
+    class LayerLoading : BaseStatePartialChanges
+    class LayerError(val error: Throwable) : BaseStatePartialChanges
+    open class LayerModel<out M>(val model: M) : BaseStatePartialChanges
+    class LayerNothing : BaseStatePartialChanges
+
+    class ProcessingModel(val processing: Boolean)
+    class Refreshing(val refreshingConfig: RefreshingConfig)
+    class RefreshingError(val refreshingError: Boolean)
 }

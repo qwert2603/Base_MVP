@@ -20,7 +20,6 @@ import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
 import com.qwert2603.base_mvp.util.showIfNotYet
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.android.synthetic.main.toolbar_default.*
@@ -93,7 +92,7 @@ abstract class BaseFragment<VS : BaseViewStateContainer, V : BaseView<VS>, P : B
         }
     }
 
-    override fun load(): Single<Any> = Single.just(Any())
+    override fun load(): Observable<Any> = Observable.just(Any())
 
     override fun refresh(): Observable<Any> = refreshSubject
 
