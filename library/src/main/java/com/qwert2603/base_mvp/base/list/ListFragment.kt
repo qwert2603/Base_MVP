@@ -11,7 +11,7 @@ import com.qwert2603.base_mvp.base.BaseFragment
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewAdapter
 import com.qwert2603.base_mvp.model.IdentifiableLong
 import com.qwert2603.base_mvp.util.showIfNotYet
-import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_list.*
 
 abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong, V : ListView<T, VS>, P : ListPresenter<T, V, VS>>
@@ -27,6 +27,9 @@ abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong
 
     protected abstract val adapter: BaseRecyclerViewAdapter<T, *>
 
+    private lateinit var itemClickSubject: PublishSubject<Long>
+    private lateinit var itemLongClickSubject: PublishSubject<Long>
+
     open protected fun createLayoutManager(): RecyclerView.LayoutManager = LinearLayoutManager(activity)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,6 +38,12 @@ abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong
         list_recyclerView.layoutManager = createLayoutManager()
         list_recyclerView.adapter = adapter
         (list_recyclerView.layoutManager as? LinearLayoutManager)?.initialPrefetchItemCount = 6
+
+        itemClickSubject = PublishSubject.create()
+        itemLongClickSubject = PublishSubject.create()
+
+        adapter.clickListener = { itemClickSubject.onNext(it) }
+        adapter.longClickListener = { itemLongClickSubject.onNext(it) }
     }
 
     override fun onDestroyView() {
@@ -59,15 +68,9 @@ abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong
         }
     }
 
-    override fun itemClicks(): Observable<Long> {
-        //todo
-        TODO()
-    }
+    override fun itemClicks() = itemClickSubject
 
-    override fun itemLongClicks(): Observable<Long> {
-        //todo
-        TODO()
-    }
+    override fun itemLongClicks() = itemLongClickSubject
 
     val _list_recyclerView: RecyclerView get() = list_recyclerView
     val _list_empty_TextView: TextView get() = list_empty_TextView

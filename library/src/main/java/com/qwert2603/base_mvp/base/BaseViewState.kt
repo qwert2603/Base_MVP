@@ -30,7 +30,7 @@ interface BaseStatePartialChanges {
     class LayerModel : BaseStatePartialChanges
     class LayerNothing : BaseStatePartialChanges
 
-    class ProcessingModel(val processing: Boolean)
-    class Refreshing(val refreshingConfig: RefreshingConfig)
-    class RefreshingError(val refreshingError: Boolean)
+    class ProcessingModel(val processing: Boolean) : BaseStatePartialChanges
+    class Refreshing(val refreshingConfig: RefreshingConfig) : BaseStatePartialChanges
+    class RefreshingError(val refreshingError: Boolean) : BaseStatePartialChanges
 }
