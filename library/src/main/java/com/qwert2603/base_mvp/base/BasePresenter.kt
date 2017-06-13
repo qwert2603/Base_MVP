@@ -30,6 +30,7 @@ abstract class BasePresenter<M, V : BaseView> {
     protected var showLoadingError = true
     protected var loading = false
     protected var modelProcesses = 0
+    protected var showingModelProcesses = 0
         set(value) {
             if (value != field) {
                 field = value
@@ -85,9 +86,9 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     open protected fun onUpdateView(view: V) {
-        view.showProcessingModel(modelProcesses > 0)
+        view.showProcessingModel(showingModelProcesses > 0)
 
-        val canRefreshNow = model != null && modelProcesses == 0 && canSwipeRefresh
+        val canRefreshNow = model != null && showingModelProcesses == 0 && canSwipeRefresh
         view.setSwipeRefreshConfig(canRefreshNow, canRefreshNow && loading)
 
         if (noModel) {
@@ -156,25 +157,29 @@ abstract class BasePresenter<M, V : BaseView> {
 
     fun <T> processModel(single: Single<T>, onSuccess: (T) -> Unit, onError: (Throwable) -> Unit, showProcessing: Boolean = true) {
         single.subscribe { t: T?, throwable: Throwable? ->
-            if (showProcessing) --modelProcesses
+            --modelProcesses
+            if (showProcessing) --showingModelProcesses
             t?.let(onSuccess)
             throwable?.let {
                 LogUtils.e(t = throwable)
                 onError(it)
             }
         }.addTo(compositeDisposableModelProcesses)
-        if (showProcessing) ++modelProcesses
+        ++modelProcesses
+        if (showProcessing) ++showingModelProcesses
     }
 
     fun processModel(completable: Completable, onSuccess: () -> Unit, onError: (Throwable) -> Unit, showProcessing: Boolean = true) {
         completable._subscribe { throwable: Throwable? ->
-            if (showProcessing) --modelProcesses
+            --modelProcesses
+            if (showProcessing) --showingModelProcesses
             if (throwable == null) onSuccess()
             else {
                 LogUtils.e(t = throwable)
                 onError(throwable)
             }
         }.addTo(compositeDisposableModelProcesses)
-        if (showProcessing) ++modelProcesses
+        ++modelProcesses
+        if (showProcessing) ++showingModelProcesses
     }
 }
