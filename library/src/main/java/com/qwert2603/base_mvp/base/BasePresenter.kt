@@ -13,6 +13,7 @@ abstract class BasePresenter<M, V : BaseView> {
         set(model) {
             field = model
             compositeDisposableModel.clear()
+            compositeDisposableModelProcesses.clear()
             updateView()
         }
 
@@ -54,6 +55,7 @@ abstract class BasePresenter<M, V : BaseView> {
         }
         view = null
         compositeDisposableModel.clear()
+        compositeDisposableModelProcesses.clear()
         compositeDisposableRxBus.clear()
         actionToApplyView.clear()
     }
@@ -152,27 +154,27 @@ abstract class BasePresenter<M, V : BaseView> {
         loadModel()
     }
 
-    fun <T> processModel(single: Single<T>, onSuccess: (T) -> Unit, onError: (Throwable) -> Unit) {
+    fun <T> processModel(single: Single<T>, onSuccess: (T) -> Unit, onError: (Throwable) -> Unit, showProcessing: Boolean = true) {
         single.subscribe { t: T?, throwable: Throwable? ->
-            --modelProcesses
+            if (showProcessing) --modelProcesses
             t?.let(onSuccess)
             throwable?.let {
                 LogUtils.e(t = throwable)
                 onError(it)
             }
         }.addTo(compositeDisposableModelProcesses)
-        ++modelProcesses
+        if (showProcessing) ++modelProcesses
     }
 
-    fun processModel(completable: Completable, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
+    fun processModel(completable: Completable, onSuccess: () -> Unit, onError: (Throwable) -> Unit, showProcessing: Boolean = true) {
         completable._subscribe { throwable: Throwable? ->
-            --modelProcesses
+            if (showProcessing) --modelProcesses
             if (throwable == null) onSuccess()
             else {
                 LogUtils.e(t = throwable)
                 onError(throwable)
             }
         }.addTo(compositeDisposableModelProcesses)
-        ++modelProcesses
+        if (showProcessing) ++modelProcesses
     }
 }
