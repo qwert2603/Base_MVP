@@ -2,6 +2,7 @@ package com.qwert2603.base_mvp.base.list
 
 import com.qwert2603.base_mvp.base.BaseStatePartialChanges
 import com.qwert2603.base_mvp.base.BaseViewStateContainer
+import com.qwert2603.base_mvp.base.OneShotFlag
 
 enum class ListState {
     EMPTY,
@@ -12,7 +13,7 @@ enum class ListState {
 data class ListViewState<out T>(
         val listState: ListState,
         val list: List<T>,
-        val scrollToTop: Boolean
+        val scrollToTop: OneShotFlag
 )
 
 interface ListViewStateContainer<out T> : BaseViewStateContainer {

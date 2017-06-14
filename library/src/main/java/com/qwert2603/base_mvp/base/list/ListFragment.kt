@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.ViewAnimator
 import com.qwert2603.base_mvp.base.BaseFragment
+import com.qwert2603.base_mvp.base.ViewLayer
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewAdapter
 import com.qwert2603.base_mvp.model.IdentifiableLong
 import com.qwert2603.base_mvp.util.showIfNotYet
@@ -54,6 +55,8 @@ abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong
     override fun render(vs: VS) {
         super.render(vs)
 
+        if (vs.baseViewState.viewLayer!=ViewLayer.MODEL) return
+
         val listViewState = vs.listViewState
         if (listViewState.listState == ListState.ITEMS) {
             adapter.modelList = listViewState.list
@@ -63,7 +66,7 @@ abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong
             ListState.NOTHING_FOUND -> POSITION_NOTHING_FOUND
             ListState.ITEMS -> POSITION_LIST
         })
-        if (listViewState.scrollToTop) {
+        if (listViewState.scrollToTop.get()) {
             list_recyclerView.apply { post { scrollToPosition(0) } }
         }
     }

@@ -80,7 +80,7 @@ abstract class BaseFragment<VS : BaseViewStateContainer, V : BaseView<VS>, P : B
         fragment_base_processingModel_FrameLayout.visibility = if (baseViewState.processingModel) View.VISIBLE else View.GONE
         swipeRefreshLayout()?.isEnabled = baseViewState.refreshingConfig.canRefresh
         swipeRefreshLayout()?.isRefreshing = baseViewState.refreshingConfig.refreshing
-        if (baseViewState.refreshingError) {
+        if (baseViewState.refreshingError.get()) {
             val snackbar = Snackbar.make(viewForSnackbar(), R.string.refreshing_error_text, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry_text, { refreshSubject.onNext(Any()) })
             snackbar.addCallback(object : Snackbar.Callback() {

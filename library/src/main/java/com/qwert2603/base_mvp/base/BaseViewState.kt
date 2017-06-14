@@ -1,5 +1,9 @@
 package com.qwert2603.base_mvp.base
 
+class OneShotFlag {
+    private var flag = true
+    fun get() = flag.also { flag = false }
+}
 
 enum class ViewLayer {
     LOADING,
@@ -17,7 +21,7 @@ data class BaseViewState(
         val viewLayer: ViewLayer,
         val processingModel: Boolean,
         val refreshingConfig: RefreshingConfig,
-        val refreshingError: Boolean
+        val refreshingError: OneShotFlag
 )
 
 interface BaseViewStateContainer {
