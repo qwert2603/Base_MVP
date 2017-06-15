@@ -1,5 +1,7 @@
 package com.qwert2603.base_mvp.base.list
 
+import android.annotation.SuppressLint
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -11,6 +13,7 @@ import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewHolder
 import com.qwert2603.base_mvp.model.IdentifiableLong
 import com.qwert2603.base_mvp.util.showIfNotYet
 import kotlinx.android.synthetic.main.fragment_list.view.*
+import java.util.*
 
 abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresenter<T, *, V>>
     : BaseDialog<V, P>(), ListView<T> {
@@ -19,11 +22,48 @@ abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresent
         private const val POSITION_EMPTY = 0
         private const val POSITION_NOTHING_FOUND = 1
         private const val POSITION_LIST = 2
+
+        private val adapterCodeKey = "adapterCodeKey"
+
+        @SuppressLint("UseSparseArrays")
+        private val sAdapters = HashMap<Int, BaseRecyclerViewAdapter<*, *>>()
+
+        private val sRandom = Random()
+
+        private fun saveAdapter(adapter: BaseRecyclerViewAdapter<*, *>): Int {
+            var code: Int
+            do {
+                code = sRandom.nextInt()
+            } while (sAdapters.containsKey(code))
+            sAdapters.put(code, adapter)
+            return code
+        }
+
+        private fun loadAdapter(code: Int): BaseRecyclerViewAdapter<*, *>? {
+            val adapter = sAdapters[code]
+            sAdapters.remove(code)
+            return adapter
+        }
     }
 
-    protected abstract val adapter: BaseRecyclerViewAdapter<T, *>
+    protected abstract var adapter: BaseRecyclerViewAdapter<T, *>
 
     open protected fun createLayoutManager(): RecyclerView.LayoutManager = LinearLayoutManager(activity)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            val code = savedInstanceState.getInt(adapterCodeKey)
+            @Suppress("UNCHECKED_CAST")
+            adapter = loadAdapter(code) as BaseRecyclerViewAdapter<T, *>
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(adapterCodeKey, saveAdapter(adapter))
+        super.onSaveInstanceState(outState)
+    }
 
     override fun createView(): View {
         val view = super.createView()
