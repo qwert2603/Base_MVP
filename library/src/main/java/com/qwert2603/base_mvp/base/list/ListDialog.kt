@@ -15,7 +15,7 @@ import com.qwert2603.base_mvp.util.showIfNotYet
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import java.util.*
 
-abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresenter<T, *, V>>
+abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresenter<T, *, V>, A:BaseRecyclerViewAdapter<T, *>>
     : BaseDialog<V, P>(), ListView<T> {
 
     companion object ViewAnimatorPositions {
@@ -46,7 +46,7 @@ abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresent
         }
     }
 
-    protected abstract var adapter: BaseRecyclerViewAdapter<T, *>
+    protected abstract var adapter: A
 
     open protected fun createLayoutManager(): RecyclerView.LayoutManager = LinearLayoutManager(activity)
 
@@ -56,7 +56,7 @@ abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresent
         if (savedInstanceState != null) {
             val code = savedInstanceState.getInt(adapterCodeKey)
             @Suppress("UNCHECKED_CAST")
-            adapter = loadAdapter(code) as BaseRecyclerViewAdapter<T, *>
+            adapter = loadAdapter(code) as A
         }
     }
 
