@@ -50,7 +50,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
         super.onSaveInstanceState(outState)
     }
 
-    protected fun createView(): View {
+    open protected fun createView(): View {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_base, null)
         dialogView.dialog_base_ViewAnimator.inflate(if (layoutRes != 0) layoutRes else R.layout.layout_empty_model, true)
         dialogView.dialog_base_retry_button.setOnClickListener { presenter.onReloadClicked() }
