@@ -49,16 +49,20 @@ class AutocompleteHelper<T>(
                                 notifyErrorLoadingSuggestions()
                                 emptyList()
                             }
-                            .doOnSuccess {
-                                it
+                            .map { results ->
+                                if (showAll) return@map results
+                                val firstOrNull = results
                                         .firstOrNull {
                                             LogUtils.d("AutocompleteHelper firstOrNull $search $it ${nameSuggestionObject(it) == search}")
                                             nameSuggestionObject(it) == search
                                         }
-                                        ?.let {
-                                            LogUtils.d("AutocompleteHelper setSuggestionToModel $it")
-                                            setSuggestionToModel(it)
-                                        }
+                                if (firstOrNull != null) {
+                                    LogUtils.d("AutocompleteHelper setSuggestionToModel $firstOrNull")
+                                    setSuggestionToModel(firstOrNull)
+                                    return@map emptyList<T>()
+                                } else {
+                                    return@map results
+                                }
                             }
                             .mapList { nameSuggestionObject(it) }
                             .toObservable()
