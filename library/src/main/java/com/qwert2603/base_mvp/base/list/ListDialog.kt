@@ -32,6 +32,8 @@ abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresent
         dialogView.list_recyclerView.adapter = adapter
         (dialogView.list_recyclerView.layoutManager as? LinearLayoutManager)?.initialPrefetchItemCount = 6
 
+        dialogView.fragment_list_swipeRefreshLayout.isEnabled = false
+
         return view
     }
 
