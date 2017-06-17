@@ -79,8 +79,9 @@ fun Consumer<in Int>.toErrorColor(resources: Resources): Consumer<Boolean>
 fun AutoCompleteTextView.suggestionsConsumer(): Consumer<List<String>> = Consumer {
     val s = text.toString()
     if (it.singleOrNull() == s) {
-        setText(s)
         setSelection(s.length)
+        dismissDropDown()
+        return@Consumer
     }
     if (it.isNotEmpty()) {
         setAdapter(SuggestionAdapter(context, s, it))

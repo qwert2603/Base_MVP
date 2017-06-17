@@ -15,8 +15,6 @@ class AutocompleteHelper<T>(
         val nameSuggestionObject: (T) -> String,
         val suggestionsShowConsumer: Consumer<List<String>>,
         val notifyErrorLoadingSuggestions: () -> Unit,
-        val getSuggestionsFromModel: () -> List<T>?,
-        val setSuggestionsToModel: (List<T>) -> Unit,
         val setSuggestionToModel: (T?) -> Unit
 ) {
     private data class SearchParams(
@@ -24,6 +22,8 @@ class AutocompleteHelper<T>(
             val showAll: Boolean,
             val search: String
     )
+
+    private var suggestions = emptyList<T>()
 
     fun subscribe(): Disposable {
         return Observable.merge(
@@ -41,13 +41,9 @@ class AutocompleteHelper<T>(
                         if (search.isBlank()) {
                             return@switchMap Observable.just<List<String>>(emptyList())
                         }
-                        getSuggestionsFromModel()
-                                ?.firstOrNull {
-                                    LogUtils.d("AutocompleteHelper firstOrNull $search $it ${nameSuggestionObject(it) == search}")
-                                    nameSuggestionObject(it) == search
-                                }
+                        suggestions
+                                .firstOrNull { nameSuggestionObject(it) == search }
                                 ?.let {
-                                    LogUtils.d("AutocompleteHelper setSuggestionToModel $it")
                                     setSuggestionToModel(it)
                                     return@switchMap Observable.just<List<String>>(emptyList())
                                 }
@@ -59,7 +55,15 @@ class AutocompleteHelper<T>(
                                 notifyErrorLoadingSuggestions()
                                 emptyList()
                             }
-                            .doOnSuccess { setSuggestionsToModel(it) }
+                            .doOnSuccess { suggestions = it }
+                            .map {
+                                it.firstOrNull { nameSuggestionObject(it) == search }
+                                        ?.let {
+                                            setSuggestionToModel(it)
+                                            return@map emptyList<T>()
+                                        }
+                                return@map it
+                            }
                             .mapList { nameSuggestionObject(it) }
                             .toObservable()
                 }
