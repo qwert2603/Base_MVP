@@ -1,7 +1,5 @@
-package com.qwert2603.base_mvp.base
+package com.qwert2603.base_mvp.util
 
-import com.qwert2603.base_mvp.util.LogUtils
-import com.qwert2603.base_mvp.util.mapList
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
@@ -25,6 +23,8 @@ class AutocompleteHelper<T>(
             val search: String
     )
 
+    private var suggestions = emptyList<T>()
+
     fun subscribe(): Disposable {
         return Observable.merge(
                 textChanges.map { SearchParams(false, false, it) },
@@ -41,6 +41,12 @@ class AutocompleteHelper<T>(
                         if (search.isBlank()) {
                             return@switchMap Observable.just<List<String>>(emptyList())
                         }
+                        suggestions
+                                .firstOrNull { nameSuggestionObject(it) == search }
+                                ?.let {
+                                    setSuggestionToModel(it)
+                                    return@switchMap Observable.just<List<String>>(emptyList())
+                                }
                         setSuggestionToModel(null)
                     }
                     return@switchMap (if (showAll) allSuggestionsSource() else suggestionsSource(search))
@@ -49,21 +55,7 @@ class AutocompleteHelper<T>(
                                 notifyErrorLoadingSuggestions()
                                 emptyList()
                             }
-                            .map { results ->
-                                if (showAll) return@map results
-                                val firstOrNull = results
-                                        .firstOrNull {
-                                            LogUtils.d("AutocompleteHelper firstOrNull $search $it ${nameSuggestionObject(it) == search}")
-                                            nameSuggestionObject(it) == search
-                                        }
-                                if (firstOrNull != null) {
-                                    LogUtils.d("AutocompleteHelper setSuggestionToModel $firstOrNull")
-                                    setSuggestionToModel(firstOrNull)
-                                    return@map emptyList<T>()
-                                } else {
-                                    return@map results
-                                }
-                            }
+                            .doOnSuccess { suggestions = it }
                             .mapList { nameSuggestionObject(it) }
                             .toObservable()
                 }

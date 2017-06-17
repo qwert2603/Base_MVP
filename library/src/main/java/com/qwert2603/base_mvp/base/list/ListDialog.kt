@@ -15,7 +15,7 @@ import com.qwert2603.base_mvp.util.showIfNotYet
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import java.util.*
 
-abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresenter<T, *, V>, A:BaseRecyclerViewAdapter<T, *>>
+abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresenter<T, *, V>, A : BaseRecyclerViewAdapter<T, *>>
     : BaseDialog<V, P>(), ListView<T> {
 
     companion object ViewAnimatorPositions {

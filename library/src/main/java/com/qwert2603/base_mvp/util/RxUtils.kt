@@ -37,6 +37,9 @@ fun <T> Single<List<T>>.doOnNextList(onNext: (T) -> Unit): Single<List<T>> = thi
         .doOnNext(onNext)
         .toList()
 
+fun <T> Single<List<T>>.filterList(filter: (T) -> Boolean): Single<List<T>> = this
+        .map { it.filter { filter(it) } }
+
 fun <T> Single<T>.startWith(completable: Completable): Single<T> = completable.toSingleDefault(Any()).flatMap { this }
 
 fun Completable.cacheIfComplete() = CachingCompletable(this)

@@ -1,5 +1,7 @@
 package com.qwert2603.base_mvp.util
 
+import io.reactivex.functions.BiFunction
+
 fun Long.abs() = Math.abs(this)
 
 fun String.startWith(s: String) = s + this
@@ -25,3 +27,4 @@ fun String.hashCodeLong()
         = filterIndexed { index, _ -> index % 2 == 0 }.hashCode().toLong() +
         filterIndexed { index, _ -> index % 2 == 1 }.hashCode().toLong() shl Integer.SIZE
 
+fun <T, U> makePair() = BiFunction { t: T, u: U -> Pair(t, u) }
