@@ -13,7 +13,6 @@ abstract class BasePresenter<M, V : BaseView> {
         set(model) {
             field = model
             compositeDisposableModel.clear()
-            compositeDisposableModelProcesses.clear()
             updateView()
         }
 
