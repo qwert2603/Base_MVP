@@ -55,6 +55,14 @@ class AutocompleteHelper<T>(
                                 notifyErrorLoadingSuggestions()
                                 emptyList()
                             }
+                            .map {
+                                it.firstOrNull { nameSuggestionObject(it) == search }
+                                        ?.let {
+                                            setSuggestionToModel(it)
+                                            return@map emptyList<T>()
+                                        }
+                                return@map it
+                            }
                             .doOnSuccess { suggestions = it }
                             .mapList { nameSuggestionObject(it) }
                             .toObservable()
