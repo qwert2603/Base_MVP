@@ -45,19 +45,19 @@ fun <T> Single<T>.startWith(completable: Completable): Single<T> = completable.t
 fun Completable.cacheIfComplete() = CachingCompletable(this)
 
 class CachingCompletable(val originalCompletable: Completable) {
-    @Volatile private var completed: Completable? = null
+
     @Volatile private var cached: Completable = createCached()
 
     private fun createCached(): Completable = originalCompletable
             .cache()
-            .doOnComplete {
-                LogUtils.d("CachingCompletable completed = Completable.complete()")
-                completed = Completable.complete()
-            }
             .doOnError {
-                LogUtils.d("CachingCompletable cached = createCached()")
-                cached = createCached()
+                LogUtils.d("CachingCompletable reset()")
+                reset()
             }
 
-    fun get(): Completable = completed ?: cached
+    fun reset() {
+        cached = createCached()
+    }
+
+    fun get(): Completable = cached
 }

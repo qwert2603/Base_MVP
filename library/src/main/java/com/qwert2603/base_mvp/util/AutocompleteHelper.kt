@@ -33,7 +33,7 @@ class AutocompleteHelper<T>(
         )
                 .filter { filter() }
                 .switchMap { (cancelPrevious, showAll, search) ->
-                    LogUtils.d("_AutocompleteHelper $cancelPrevious $showAll $search")
+                    LogUtils.d("AutocompleteHelper $cancelPrevious $showAll $search")
                     if (cancelPrevious) {
                         return@switchMap Observable.just<List<String>>(emptyList())
                     }
