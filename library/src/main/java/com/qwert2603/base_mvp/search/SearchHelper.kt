@@ -1,5 +1,6 @@
-package com.qwert2603.base_mvp.util
+package com.qwert2603.base_mvp.search
 
+import com.qwert2603.base_mvp.util.filterList
 import io.reactivex.Single
 
 class SearchHelper<T>(
