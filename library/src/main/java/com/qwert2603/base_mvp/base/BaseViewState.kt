@@ -19,8 +19,9 @@ data class BaseViewState(
         val refreshingError: OneShotFlag
 ) : ViewState_ID()
 
-interface BaseViewStateContainer {
+interface BaseViewStateContainer<VS> {
     val baseViewState: BaseViewState
+    fun changeBaseViewState(baseViewState: BaseViewState): VS
 }
 
 interface BaseStatePartialChanges {

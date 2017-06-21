@@ -15,7 +15,7 @@ import com.qwert2603.base_mvp.util.showIfNotYet
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_list.view.*
 
-abstract class ListViewImpl<VS : ListViewStateContainer<T>, T : IdentifiableLong, V : ListView<T, VS>, P : ListPresenter<T, V, VS>>
+abstract class ListViewImpl<VS : ListViewStateContainer<VS, T>, T : IdentifiableLong, V : ListView<T, VS>, P : ListPresenter<T, V, VS>>
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : BaseViewImpl<VS, V, P>(context, attrs, defStyleAttr), ListView<T, VS> {
 

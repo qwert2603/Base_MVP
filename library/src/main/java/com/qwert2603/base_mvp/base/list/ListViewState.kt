@@ -17,8 +17,9 @@ data class ListViewState<out T>(
         val scrollToTop: OneShotFlag
 ) : ViewState_ID()
 
-interface ListViewStateContainer<out T> : BaseViewStateContainer {
+interface ListViewStateContainer<VS, T> : BaseViewStateContainer<VS> {
     val listViewState: ListViewState<T>
+    fun changeListViewState(listViewState: ListViewState<T>): VS
 }
 
 interface ListStatePartialChanges : BaseStatePartialChanges {

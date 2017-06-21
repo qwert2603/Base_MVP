@@ -24,7 +24,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.android.synthetic.main.toolbar_default.*
 
-abstract class BaseFragment<VS : BaseViewStateContainer, V : BaseView<VS>, P : BasePresenter<V, VS>> : BackStackFragment<V, P>(), BaseView<VS> {
+abstract class BaseFragment<VS : BaseViewStateContainer<VS>, V : BaseView<VS>, P : BasePresenter<V, VS>> : BackStackFragment<V, P>(), BaseView<VS> {
 
     companion object ViewAnimatorPositions {
         private const val POSITION_LOADING = 0

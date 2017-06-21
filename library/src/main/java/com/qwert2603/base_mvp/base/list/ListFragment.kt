@@ -15,7 +15,7 @@ import com.qwert2603.base_mvp.util.showIfNotYet
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_list.*
 
-abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong, V : ListView<T, VS>, P : ListPresenter<T, V, VS>>
+abstract class ListFragment<VS : ListViewStateContainer<VS, T>, T : IdentifiableLong, V : ListView<T, VS>, P : ListPresenter<T, V, VS>>
     : BaseFragment<VS, V, P>(), ListView<T, VS> {
 
     companion object ViewAnimatorPositions {
@@ -55,7 +55,7 @@ abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong
     override fun render(vs: VS) {
         super.render(vs)
 
-        if (vs.baseViewState.viewLayer!=ViewLayer.MODEL) return
+        if (vs.baseViewState.viewLayer != ViewLayer.MODEL) return
 
         val listViewState = vs.listViewState
         if (listViewState.listState == ListState.ITEMS) {

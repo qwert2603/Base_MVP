@@ -18,7 +18,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_base.view.*
 
-abstract class BaseViewImpl<VS : BaseViewStateContainer, V : BaseView<VS>, P : BasePresenter<V, VS>>
+abstract class BaseViewImpl<VS : BaseViewStateContainer<VS>, V : BaseView<VS>, P : BasePresenter<V, VS>>
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : MviFrameLayout<V, P>(context, attrs, defStyleAttr), BaseView<VS> {
 
