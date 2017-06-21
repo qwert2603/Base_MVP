@@ -1,6 +1,7 @@
 package com.qwert2603.base_mvp.util
 
 import io.reactivex.functions.BiFunction
+import java.util.*
 
 fun Long.abs() = Math.abs(this)
 
@@ -23,8 +24,9 @@ fun String.filterSpaces() = filter { it != ' ' }
 
 fun <T> List<T>.reduceToString() = if (isEmpty()) "" else this.map { it.toString() }.reduce { c1, c2 -> "$c1$c2" }
 
-fun String.hashCodeLong()
-        = filterIndexed { index, _ -> index % 2 == 0 }.hashCode().toLong() +
-        filterIndexed { index, _ -> index % 2 == 1 }.hashCode().toLong() shl Integer.SIZE
+fun String.hashCodeLong() =
+        if (isEmpty()) Random().nextLong()
+        else filterIndexed { index, _ -> index % 2 == 0 }.hashCode().toLong() +
+                (filterIndexed { index, _ -> index % 2 == 1 }.hashCode().toLong() shl Integer.SIZE)
 
 fun <T, U> makePair() = BiFunction { t: T, u: U -> Pair(t, u) }

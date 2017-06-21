@@ -7,4 +7,10 @@
         <attr name="android:foregroundGravity" />
     </declare-styleable>
 
+    <declare-styleable name="ShowAllButtonWithLoading">
+        <attr name="showAllDrawable" format="reference" />
+        <attr name="progressBarColor" format="color" />
+        <attr name="progressBarMargin" format="dimension" />
+    </declare-styleable>
+
 </resources>

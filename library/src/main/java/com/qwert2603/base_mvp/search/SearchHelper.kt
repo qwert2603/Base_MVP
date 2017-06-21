@@ -1,5 +1,6 @@
-package com.qwert2603.base_mvp.util
+package com.qwert2603.base_mvp.search
 
+import com.qwert2603.base_mvp.util.filterList
 import io.reactivex.Single
 
 class SearchHelper<T>(
@@ -9,8 +10,9 @@ class SearchHelper<T>(
     @Volatile private var cache = emptyList<T>()
 
     /** empty query means "find all". */
-    fun search(query: String): Single<List<T>> {
+    fun search(query: String, forceFromServer: Boolean = false): Single<List<T>> {
         val q = query.toLowerCase()
+        if (forceFromServer) return searchFromServer(query).sortResults(query)
         val serverResults = searchFromServer("").doOnSuccess { cache = it }
         if (q.isBlank()) return serverResults.sortResults(query)
         return Single.just(cache)
