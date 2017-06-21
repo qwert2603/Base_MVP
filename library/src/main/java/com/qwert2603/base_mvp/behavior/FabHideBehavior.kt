@@ -8,7 +8,6 @@ import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
 import android.view.View
 
-@Suppress("UNUSED")
 class FabHideBehavior @JvmOverloads constructor(context: Context? = null, attributeSet: AttributeSet? = null) : CoordinatorLayout.Behavior<FloatingActionButton>(context, attributeSet) {
 
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: FloatingActionButton, directTargetChild: View, target: View, nestedScrollAxes: Int): Boolean {

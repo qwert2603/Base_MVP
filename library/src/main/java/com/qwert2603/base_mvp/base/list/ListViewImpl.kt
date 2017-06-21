@@ -60,7 +60,7 @@ abstract class ListViewImpl<VS : ListViewStateContainer<T>, T : IdentifiableLong
     override fun render(vs: VS) {
         super.render(vs)
 
-        if (vs.baseViewState.viewLayer!= ViewLayer.MODEL) return
+        if (vs.baseViewState.viewLayer != ViewLayer.MODEL) return
 
         val listViewState = vs.listViewState
         if (listViewState.listState == ListState.ITEMS) {
@@ -71,7 +71,7 @@ abstract class ListViewImpl<VS : ListViewStateContainer<T>, T : IdentifiableLong
             ListState.NOTHING_FOUND -> POSITION_NOTHING_FOUND
             ListState.ITEMS -> POSITION_LIST
         })
-        if (listViewState.scrollToTop.get()) {
+        if (listViewState.scrollToTop.getFlag(listViewState.id)) {
             list_recyclerView.apply { post { scrollToPosition(0) } }
         }
     }

@@ -66,7 +66,7 @@ abstract class ListFragment<VS : ListViewStateContainer<T>, T : IdentifiableLong
             ListState.NOTHING_FOUND -> POSITION_NOTHING_FOUND
             ListState.ITEMS -> POSITION_LIST
         })
-        if (listViewState.scrollToTop.get()) {
+        if (listViewState.scrollToTop.getFlag(listViewState.id)) {
             list_recyclerView.apply { post { scrollToPosition(0) } }
         }
     }

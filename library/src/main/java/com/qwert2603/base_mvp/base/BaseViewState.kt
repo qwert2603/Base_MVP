@@ -1,10 +1,5 @@
 package com.qwert2603.base_mvp.base
 
-class OneShotFlag {
-    private var flag = true
-    fun get() = flag.also { flag = false }
-}
-
 enum class ViewLayer {
     LOADING,
     ERROR,
@@ -22,7 +17,7 @@ data class BaseViewState(
         val processingModel: Boolean,
         val refreshingConfig: RefreshingConfig,
         val refreshingError: OneShotFlag
-)
+) : ViewState_ID()
 
 interface BaseViewStateContainer {
     val baseViewState: BaseViewState
@@ -36,5 +31,5 @@ interface BaseStatePartialChanges {
 
     class ProcessingModel(val processing: Boolean) : BaseStatePartialChanges
     class Refreshing(val refreshingConfig: RefreshingConfig) : BaseStatePartialChanges
-    class RefreshingError(val refreshingError: Boolean) : BaseStatePartialChanges
+    class RefreshingError : BaseStatePartialChanges
 }
