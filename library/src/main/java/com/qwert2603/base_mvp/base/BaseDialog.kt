@@ -18,6 +18,8 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
     abstract val layoutRes: Int
     lateinit protected var dialogView: View
 
+    private var willBeRecreated = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
@@ -27,10 +29,13 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
         }
         @Suppress("UNCHECKED_CAST")
         presenter.bindView(this as V)
+        willBeRecreated = false
     }
 
     override fun onDestroy() {
-        presenter.unbindView()
+        if (!willBeRecreated) {
+            presenter.unbindView()
+        }
         super.onDestroy()
     }
 
@@ -47,6 +52,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(presenterCodeKey, savePresenter(presenter))
+        willBeRecreated = true
         super.onSaveInstanceState(outState)
     }
 
