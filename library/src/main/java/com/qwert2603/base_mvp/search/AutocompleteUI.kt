@@ -42,7 +42,7 @@ class AutocompleteUI(
     }
 }
 
-fun AutocompleteUI._suggestionsConsumer() = Consumer<AutocompleteHelper.State> {
+fun AutocompleteUI.suggestionsConsumer() = Consumer<AutocompleteHelper.State> {
     when (it) {
         AutocompleteHelper.State.Cancel -> {
             autoCompleteTextView.dismissDropDown()
