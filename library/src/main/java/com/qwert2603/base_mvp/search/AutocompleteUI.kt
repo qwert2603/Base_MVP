@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import android.widget.PopupWindow
 import com.qwert2603.base_mvp.R
+import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
 import com.qwert2603.base_mvp.widgets.ShowAllButtonWithLoading
 import io.reactivex.functions.Consumer
@@ -43,13 +44,13 @@ class AutocompleteUI(
 }
 
 fun AutocompleteUI.suggestionsConsumer() = Consumer<AutocompleteHelper.State> {
+    LogUtils.d("_suggestionsConsumer $it")
     when (it) {
         AutocompleteHelper.State.Cancel -> {
             autoCompleteTextView.dismissDropDown()
             showAllButtonWithLoading.setState(ShowAllButtonWithLoading.State.SHOW_ALL)
         }
         AutocompleteHelper.State.Loading -> {
-            autoCompleteTextView.dismissDropDown()
             showAllButtonWithLoading.setState(ShowAllButtonWithLoading.State.LOADING)
         }
         AutocompleteHelper.State.NothingFound -> {
