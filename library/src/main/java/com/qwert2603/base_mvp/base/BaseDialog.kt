@@ -3,9 +3,11 @@ package com.qwert2603.base_mvp.base
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import com.qwert2603.base_mvp.R
+import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.inflate
 import com.qwert2603.base_mvp.util.showIfNotYet
 import kotlinx.android.synthetic.main.dialog_base.view.*
@@ -19,6 +21,18 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
     lateinit protected var dialogView: View
 
     private var willBeRecreated = false
+
+    private var processingModel = false
+        set(value) {
+            field = value
+            updateButtonsEnable()
+        }
+
+    private var layerModel = false
+        set(value) {
+            field = value
+            updateButtonsEnable()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,22 +79,37 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
 
     override fun showProcessingModel(processingModel: Boolean) {
         dialogView.dialog_base_processingModel_FrameLayout.visibility = if (processingModel) View.VISIBLE else View.GONE
+        this.processingModel = processingModel
     }
 
     override fun showLayerLoading() {
         dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_LOADING)
+        layerModel = false
     }
 
     override fun showLayerLoadingError() {
         dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_LOADING_ERROR)
+        layerModel = false
     }
 
     override fun showLayerModel() {
         dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_MODEL_VIEWS)
+        layerModel = true
     }
 
     override fun showLayerNothing() {
         dialogView.dialog_base_ViewAnimator.showIfNotYet(POSITION_NOTHING)
+        layerModel = false
+    }
+
+    protected fun updateButtonsEnable() {
+        val alertDialog = dialog as AlertDialog
+        val enable = layerModel && !processingModel
+        LogUtils.d("BaseDialog updateButtonsEnable alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL) == ${alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)}")
+//        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = enable
+        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).isEnabled = enable
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = enable
+
     }
 
     override fun setSwipeRefreshConfig(canRefresh: Boolean, refreshing: Boolean) {}
