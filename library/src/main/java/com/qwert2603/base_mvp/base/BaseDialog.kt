@@ -2,10 +2,12 @@ package com.qwert2603.base_mvp.base
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.support.annotation.StringRes
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.util.LogUtils
 import com.qwert2603.base_mvp.util.inflate
@@ -114,6 +116,10 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
 
     override fun setSwipeRefreshConfig(canRefresh: Boolean, refreshing: Boolean) {}
     override fun notifyRefreshingError() {}
+
+    protected fun makeToast(@StringRes stringRes: Int) {
+        Toast.makeText(context, stringRes, Toast.LENGTH_SHORT).show()
+    }
 
     companion object {
 
