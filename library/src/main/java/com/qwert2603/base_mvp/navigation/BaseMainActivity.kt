@@ -20,6 +20,7 @@ import android.widget.EditText
 import com.qwert2603.base_mvp.BaseApplication
 import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
+import com.qwert2603.base_mvp.base.BaseDialog
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
@@ -264,6 +265,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     override fun removeBackStackItem(backStackItem: BackStackItem, sharedElements: List<View>) {
         LogUtils.d("removeBackStackItem $backStackItem")
         modifyBackStack(backStack.filter { it.tag != backStackItem.tag }, sharedElements)
+    }
+
+    override fun showDialog(dialog: BaseDialog<*, *>, tag: String) {
+        dialog.show(supportFragmentManager, tag)
     }
 
     override fun onBackPressed() {
