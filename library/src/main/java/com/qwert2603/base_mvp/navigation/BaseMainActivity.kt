@@ -237,7 +237,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                                     .also {
                                         it.addListener(object : TransitionListenerAdapter() {
                                             override fun onTransitionEnd(transition: Transition) {
-                                                translateFragment(slideOffset)
+                                                translateFragment(slideOffset, true)
                                             }
                                         })
                                     }
@@ -360,9 +360,15 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }, millis)
     }
 
-    private fun translateFragment(slideOffset: Float) {
+    private fun translateFragment(slideOffset: Float, animate: Boolean = false) {
         if (translateFragmentOnDrawerSlide()) {
-            fragment_container.translationX = navigation_view.width * slideOffset * translateFragmentOnDrawerSlideFraction()
+            val translationX = navigation_view.width * slideOffset * translateFragmentOnDrawerSlideFraction()
+            if (animate) {
+                fragment_container.animate().translationX(translationX)
+            } else {
+                fragment_container.animate().cancel()
+                fragment_container.translationX = translationX
+            }
         }
     }
 }
