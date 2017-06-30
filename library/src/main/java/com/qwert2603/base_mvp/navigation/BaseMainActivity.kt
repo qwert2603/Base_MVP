@@ -49,6 +49,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     protected open fun translateFragmentOnDrawerSlide() = true
     protected open fun translateFragmentOnDrawerSlideFraction() = 0.23f
+    private var slideOffset = 0f
 
     private lateinit var backStack: List<BackStackItem>
 
@@ -105,10 +106,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 translateFragment(slideOffset)
-            }
-
-            override fun onDrawerClosed(drawerView: View?) {
-                translateFragment(0f)
+                this@BaseMainActivity.slideOffset = slideOffset
             }
         }
         drawer_layout.addDrawerListener(drawerListener)
@@ -295,6 +293,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     override fun onFragmentResumed(fragment: BackStackFragment<*, *>) {
+        translateFragment(slideOffset)
         val backStackItem = fragment.getBackStackItem()
         if (backStackItem.tag == backStack.last().tag) {
             drawer_layout.setDrawerLockMode(if (backStackItem.fullscreen) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED)
