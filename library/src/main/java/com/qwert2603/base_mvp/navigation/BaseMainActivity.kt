@@ -106,6 +106,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 translateFragment(slideOffset)
             }
+
+            override fun onDrawerClosed(drawerView: View?) {
+                translateFragment(0f)
+            }
         }
         drawer_layout.addDrawerListener(drawerListener)
 
