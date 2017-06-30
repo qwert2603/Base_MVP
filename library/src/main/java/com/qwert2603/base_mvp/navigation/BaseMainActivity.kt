@@ -236,7 +236,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                             it.enterTransition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
                                     .also {
                                         it.addListener(object : TransitionListenerAdapter() {
-                                            override fun onTransitionEnd(transition: Transition) {
+                                            override fun onTransitionStart(transition: Transition) {
                                                 translateFragment(slideOffset, true)
                                             }
                                         })
