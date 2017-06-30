@@ -24,10 +24,7 @@ import com.qwert2603.base_mvp.base.BaseDialog
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
-import com.qwert2603.base_mvp.util.LogUtils
-import com.qwert2603.base_mvp.util.inflate
-import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
-import com.qwert2603.base_mvp.util.setOnPreDrawAction
+import com.qwert2603.base_mvp.util.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -237,6 +234,13 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                                     || it.getBackStackItem().asNested && backStackChange.to.filter { !it.asNested }.size == 1
                             @SuppressLint("NewApi")
                             it.enterTransition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
+                                    .also {
+                                        it.addListener(object : TransitionListenerAdapter() {
+                                            override fun onTransitionEnd(transition: Transition) {
+                                                translateFragment(slideOffset)
+                                            }
+                                        })
+                                    }
                         }
 
                 (fragmentsToDisappear - fragmentsToAppear)
@@ -293,7 +297,6 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     override fun onFragmentResumed(fragment: BackStackFragment<*, *>) {
-        translateFragment(slideOffset)
         val backStackItem = fragment.getBackStackItem()
         if (backStackItem.tag == backStack.last().tag) {
             drawer_layout.setDrawerLockMode(if (backStackItem.fullscreen) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED)
