@@ -249,7 +249,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             }
         }
 
-        translateFragment(0f)
+        translateFragment(0f) // we need it because otherwise fragment.enterTransition finishes in wrong position on screen.
         fragmentTransaction.commitAllowingStateLoss()
 
         LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
