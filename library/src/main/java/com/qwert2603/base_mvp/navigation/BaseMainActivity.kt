@@ -24,7 +24,10 @@ import com.qwert2603.base_mvp.base.BaseDialog
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
-import com.qwert2603.base_mvp.util.*
+import com.qwert2603.base_mvp.util.LogUtils
+import com.qwert2603.base_mvp.util.inflate
+import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
+import com.qwert2603.base_mvp.util.setOnPreDrawAction
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -234,13 +237,6 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                                     || it.getBackStackItem().asNested && backStackChange.to.filter { !it.asNested }.size == 1
                             @SuppressLint("NewApi")
                             it.enterTransition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
-                                    .also {
-                                        it.addListener(object : TransitionListenerAdapter() {
-                                            override fun onTransitionStart(transition: Transition) {
-                                                translateFragment(slideOffset, true)
-                                            }
-                                        })
-                                    }
                         }
 
                 (fragmentsToDisappear - fragmentsToAppear)
@@ -253,6 +249,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             }
         }
 
+        translateFragment(0f)
         fragmentTransaction.commitAllowingStateLoss()
 
         LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
@@ -360,15 +357,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         }, millis)
     }
 
-    private fun translateFragment(slideOffset: Float, animate: Boolean = false) {
+    private fun translateFragment(slideOffset: Float) {
         if (translateFragmentOnDrawerSlide()) {
-            val translationX = navigation_view.width * slideOffset * translateFragmentOnDrawerSlideFraction()
-            if (animate) {
-                fragment_container.animate().translationX(translationX)
-            } else {
-                fragment_container.animate().cancel()
-                fragment_container.translationX = translationX
-            }
+            fragment_container.translationX = navigation_view.width * slideOffset * translateFragmentOnDrawerSlideFraction()
         }
     }
 }
