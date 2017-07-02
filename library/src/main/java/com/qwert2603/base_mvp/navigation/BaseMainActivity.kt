@@ -82,7 +82,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
         navigationAdapter.clickListener = object : ClickListener {
             override fun onItemClicked(itemId: Long) {
-                blockUI(70, {
+                blockUI(50, {
                     closeDrawer()
                     modifyBackStack(createBackStackForNavigationItem(itemId.toInt()))
                 })
@@ -259,7 +259,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         LogUtils.d("navigateTo $backStackItem")
         val action = { modifyBackStack(backStack + backStackItem, sharedElements) }
         if (delay) {
-            blockUI(150, action)
+            blockUI(100, action)
         } else {
             action()
         }
@@ -311,7 +311,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                         hideKeyboard()
                         drawer_layout.openDrawer(GravityCompat.START)
                     } else {
-                        blockUI(150, { goBack() })
+                        blockUI(100, { goBack() })
                     }
                 }
             }
@@ -326,11 +326,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     private fun closeDrawer(): Boolean {
-        val opened = drawer_layout.isDrawerOpen(GravityCompat.START)
-        if (opened) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        }
-        return opened
+        return drawer_layout.isDrawerOpen(GravityCompat.START)
+                .also { if (it) drawer_layout.closeDrawer(GravityCompat.START) }
     }
 
     override fun hideKeyboard(removeFocus: Boolean) {
