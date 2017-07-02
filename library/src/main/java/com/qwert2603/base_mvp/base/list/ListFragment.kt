@@ -35,9 +35,11 @@ abstract class ListFragment<T : IdentifiableLong, V : ListView<T>, out P : ListP
         list_recyclerView.layoutManager = createLayoutManager()
         list_recyclerView.adapter = adapter
         (list_recyclerView.layoutManager as? LinearLayoutManager)?.initialPrefetchItemCount = 6
+        adapter.recyclerView = list_recyclerView
     }
 
     override fun onDestroyView() {
+        adapter.recyclerView = null
         list_recyclerView.apply { postDelayed({ adapter = null }, 2000) }
         super.onDestroyView()
     }

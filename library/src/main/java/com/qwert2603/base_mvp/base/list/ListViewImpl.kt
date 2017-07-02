@@ -39,9 +39,12 @@ abstract class ListViewImpl<T : IdentifiableLong, V : ListView<T>, out P : ListP
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         list_recyclerView.adapter = adapter
+        adapter.recyclerView = list_recyclerView
+
     }
 
     override fun onDetachedFromWindow() {
+        adapter.recyclerView = null
         list_recyclerView.apply { postDelayed({ adapter = null }, 2000) }
         super.onDetachedFromWindow()
     }
