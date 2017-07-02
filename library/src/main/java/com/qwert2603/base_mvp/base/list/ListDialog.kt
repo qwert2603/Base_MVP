@@ -71,10 +71,17 @@ abstract class ListDialog<T : IdentifiableLong, V : ListView<T>, P : ListPresent
         dialogView.list_recyclerView.layoutManager = createLayoutManager()
         dialogView.list_recyclerView.adapter = adapter
         (dialogView.list_recyclerView.layoutManager as? LinearLayoutManager)?.initialPrefetchItemCount = 6
+        adapter.recyclerView = dialogView.list_recyclerView
 
         dialogView.fragment_list_swipeRefreshLayout.isEnabled = false
 
         return view
+    }
+
+    override fun onDestroyView() {
+        adapter.recyclerView = null
+        dialogView.list_recyclerView.apply { postDelayed({ adapter = null }, 2000) }
+        super.onDestroyView()
     }
 
     override fun showEmpty() {
