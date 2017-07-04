@@ -270,6 +270,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         modifyBackStack(backStack.filter { it.tag != backStackItem.tag }, sharedElements)
     }
 
+    override fun isInBackStack(backStackItem: BackStackItem) = backStackItem.tag in backStack.map { it.tag }
+
     override fun showDialog(dialog: DialogFragment, tag: String) {
         blockUI(1000)
         dialog.show(supportFragmentManager, tag)

@@ -8,6 +8,7 @@ interface Navigation {
     fun modifyBackStack(newBackStack: List<BackStackItem>, sharedElements: List<View> = emptyList())
     fun navigateTo(backStackItem: BackStackItem, delay: Boolean = true, sharedElements: List<View> = emptyList())
     fun removeBackStackItem(backStackItem: BackStackItem, sharedElements: List<View> = emptyList())
+    fun isInBackStack(backStackItem: BackStackItem): Boolean
 
     fun showDialog(dialog: DialogFragment, tag: String)
 
