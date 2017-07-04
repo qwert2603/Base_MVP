@@ -271,7 +271,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     override fun showDialog(dialog: DialogFragment, tag: String) {
-        blockUI(80, { dialog.show(supportFragmentManager, tag) })
+        blockUI(1000)
+        dialog.show(supportFragmentManager, tag)
     }
 
     override fun onBackPressed() {
