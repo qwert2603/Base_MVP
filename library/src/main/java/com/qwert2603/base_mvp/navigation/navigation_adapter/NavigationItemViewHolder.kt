@@ -6,6 +6,7 @@ import android.view.View
 import com.qwert2603.base_mvp.BaseApplication
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.base.recyclerview.BaseRecyclerViewHolder
+import com.qwert2603.base_mvp.util.LogUtils
 import kotlinx.android.synthetic.main.item_navigation_menu.view.*
 import javax.inject.Inject
 
@@ -20,7 +21,12 @@ class NavigationItemViewHolder(itemView: View)
 
     override fun bindPresenter() {
         super.bindPresenter()
-        val selected = itemId == (adapter as? NavigationAdapter)?.selectedItemId
+        val adapter = adapter
+        if (adapter !is NavigationAdapter) {
+            LogUtils.e("NavigationItemViewHolder adapter !is NavigationAdapter")
+            return
+        }
+        val selected = itemId == adapter.selectedItemId
         itemView.isSelected = selected
         with(itemView) {
             val tintColor = if (selected) R.color.navigation_menu_item_tint_selected else android.R.color.black
