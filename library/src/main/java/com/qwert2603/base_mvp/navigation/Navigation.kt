@@ -1,15 +1,15 @@
 package com.qwert2603.base_mvp.navigation
 
+import android.support.v4.app.DialogFragment
 import android.view.View
 import android.widget.EditText
-import com.qwert2603.base_mvp.base.BaseDialog
 
 interface Navigation {
     fun modifyBackStack(newBackStack: List<BackStackItem>, sharedElements: List<View> = emptyList())
     fun navigateTo(backStackItem: BackStackItem, delay: Boolean = true, sharedElements: List<View> = emptyList())
     fun removeBackStackItem(backStackItem: BackStackItem, sharedElements: List<View> = emptyList())
 
-    fun showDialog(dialog: BaseDialog<*, *>, tag: String)
+    fun showDialog(dialog: DialogFragment, tag: String)
 
     fun hideKeyboard(removeFocus: Boolean = true)
     fun showKeyboard(editText: EditText)

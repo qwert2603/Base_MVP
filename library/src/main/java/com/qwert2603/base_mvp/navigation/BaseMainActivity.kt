@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -20,7 +21,6 @@ import android.widget.EditText
 import com.qwert2603.base_mvp.BaseApplication
 import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
-import com.qwert2603.base_mvp.base.BaseDialog
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
@@ -270,9 +270,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         modifyBackStack(backStack.filter { it.tag != backStackItem.tag }, sharedElements)
     }
 
-    override fun showDialog(dialog: BaseDialog<*, *>, tag: String) {
-        blockUI(500)
-        dialog.show(supportFragmentManager, tag)
+    override fun showDialog(dialog: DialogFragment, tag: String) {
+        blockUI(80, { dialog.show(supportFragmentManager, tag) })
     }
 
     override fun onBackPressed() {
