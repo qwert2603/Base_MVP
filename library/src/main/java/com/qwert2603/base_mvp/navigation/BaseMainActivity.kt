@@ -271,6 +271,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     override fun showDialog(dialog: BaseDialog<*, *>, tag: String) {
+        blockUI(500)
         dialog.show(supportFragmentManager, tag)
     }
 
