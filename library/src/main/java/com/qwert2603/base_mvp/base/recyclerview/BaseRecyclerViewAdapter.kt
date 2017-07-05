@@ -10,6 +10,8 @@ import java.util.*
 
 abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerViewHolder<M>> : RecyclerView.Adapter<VH>() {
 
+    var recyclerView: RecyclerView? = null
+
     open var modelList: List<M> = emptyList()
         set(value) {
             val oldList = field

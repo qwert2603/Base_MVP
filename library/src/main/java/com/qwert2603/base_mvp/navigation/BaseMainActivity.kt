@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -47,6 +48,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     protected open fun translateFragmentOnDrawerSlide() = true
     protected open fun translateFragmentOnDrawerSlideFraction() = 0.23f
+    private var slideOffset = 0f
 
     private lateinit var backStack: List<BackStackItem>
 
@@ -101,6 +103,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 translateFragment(slideOffset)
+                this@BaseMainActivity.slideOffset = slideOffset
             }
         }
         drawer_layout.addDrawerListener(drawerListener)
@@ -243,6 +246,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             }
         }
 
+        translateFragment(0f) // we need it because otherwise fragment.enterTransition finishes in wrong position on screen.
         fragmentTransaction.commitAllowingStateLoss()
 
         LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
@@ -252,7 +256,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         LogUtils.d("navigateTo $backStackItem")
         val action = { modifyBackStack(backStack + backStackItem, sharedElements) }
         if (delay) {
-            blockUI(150, action)
+            blockUI(80, action)
         } else {
             action()
         }
@@ -261,6 +265,15 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     override fun removeBackStackItem(backStackItem: BackStackItem, sharedElements: List<View>) {
         LogUtils.d("removeBackStackItem $backStackItem")
         modifyBackStack(backStack.filter { it.tag != backStackItem.tag }, sharedElements)
+    }
+
+    override fun isInBackStack(backStackItem: BackStackItem) = backStackItem.tag in backStack.map { it.tag }
+
+    override fun showDialog(dialog: DialogFragment, tag: String) {
+        blockUI(0, {
+            blockUI(1000)
+            dialog.show(supportFragmentManager, tag)
+        })
     }
 
     override fun onBackPressed() {
@@ -300,7 +313,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                         hideKeyboard()
                         drawer_layout.openDrawer(GravityCompat.START)
                     } else {
-                        blockUI(150, { goBack() })
+                        blockUI(80, { goBack() })
                     }
                 }
             }
@@ -315,11 +328,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     }
 
     private fun closeDrawer(): Boolean {
-        val opened = drawer_layout.isDrawerOpen(GravityCompat.START)
-        if (opened) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        }
-        return opened
+        return drawer_layout.isDrawerOpen(GravityCompat.START)
+                .also { if (it) drawer_layout.closeDrawer(GravityCompat.START) }
     }
 
     override fun hideKeyboard(removeFocus: Boolean) {

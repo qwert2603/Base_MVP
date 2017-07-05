@@ -17,7 +17,7 @@ object LogUtils {
 
     @JvmOverloads
     fun e(s: String = ERROR_MSG, t: Throwable? = null) {
-        Log.e(APP_TAG, s, t)
+        Log.e(APP_TAG, "$s $t", t)
     }
 
     fun printCurrentStack() {

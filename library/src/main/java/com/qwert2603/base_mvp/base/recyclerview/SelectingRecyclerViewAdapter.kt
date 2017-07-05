@@ -1,7 +1,6 @@
 package com.qwert2603.base_mvp.base.recyclerview
 
 import android.support.transition.TransitionManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.qwert2603.base_mvp.R
@@ -17,8 +16,6 @@ abstract class SelectingRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyc
     }
 
     var selectionListener: SelectionListener? = null
-
-    var recyclerView: RecyclerView? = null
 
     var selectionMode = false
         set(value) {

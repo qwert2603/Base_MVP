@@ -50,9 +50,12 @@ abstract class ListViewImpl<VS : ListViewStateContainer<VS, T>, T : Identifiable
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         list_recyclerView.adapter = adapter
+        adapter.recyclerView = list_recyclerView
+
     }
 
     override fun onDetachedFromWindow() {
+        adapter.recyclerView = null
         list_recyclerView.apply { postDelayed({ adapter = null }, 2000) }
         super.onDetachedFromWindow()
     }

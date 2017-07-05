@@ -19,6 +19,7 @@ open class BasePreferenceHelper {
             val noSavedValueExceptionProvider: () -> Exception = { KeyValueHelper.NoSavedValueException(key) }
     ) {
         private var value: T? = null
+            @Synchronized set
 
         fun load(): Single<T> {
             value?.let { return Single.just(it) }
