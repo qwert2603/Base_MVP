@@ -144,7 +144,7 @@ abstract class BasePresenter<M, V : BaseView> {
     }
 
     open protected fun onModelLoadError(throwable: Throwable) {
-        LogUtils.e(t = throwable)
+        LogUtils.e("onModelLoadError", throwable)
         showLoadingError = true
         model?.let { applyViewASAP { notifyRefreshingError() } }
     }
@@ -160,7 +160,7 @@ abstract class BasePresenter<M, V : BaseView> {
             if (showProcessing) --showingModelProcesses
             t?.let(onSuccess)
             throwable?.let {
-                LogUtils.e(t = throwable)
+                LogUtils.e("processModel", throwable)
                 onError(it)
             }
         }.addTo(compositeDisposableModelProcesses)
@@ -174,7 +174,7 @@ abstract class BasePresenter<M, V : BaseView> {
             if (showProcessing) --showingModelProcesses
             if (throwable == null) onSuccess()
             else {
-                LogUtils.e(t = throwable)
+                LogUtils.e("processModel", throwable)
                 onError(throwable)
             }
         }.addTo(compositeDisposableModelProcesses)
