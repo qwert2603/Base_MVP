@@ -105,7 +105,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
     }
 
     protected fun updateButtonsEnable() {
-        val alertDialog = dialog as AlertDialog
+        val alertDialog = dialog as? AlertDialog ?: return
         val enable = layerModel && !processingModel
         LogUtils.d("BaseDialog updateButtonsEnable alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL) == ${alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)}")
 //        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = enable
