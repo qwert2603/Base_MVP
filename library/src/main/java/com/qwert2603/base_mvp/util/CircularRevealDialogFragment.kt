@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.ViewAnimationUtils
 import com.qwert2603.base_mvp.BuildConfig
@@ -18,6 +19,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
     }
 
     open protected val animatorDuration = 300L
+    private var wasRecreated = false
 
     @SuppressLint("NewApi")
     override fun onStart() {
@@ -61,14 +63,14 @@ open class CircularRevealDialogFragment : DialogFragment() {
         if (!arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
         runOnLollipopOrHigher {
             val decorView = alertDialog.window.decorView
-            val startX = arguments.getInt(START_POSITION_X, -1)
-            val startY = arguments.getInt(START_POSITION_Y, -1)
+            val startX = if (wasRecreated) decorView.getCenterX() else arguments.getInt(START_POSITION_X)
+            val startY = if (wasRecreated) decorView.getCenterY() else arguments.getInt(START_POSITION_Y)
             val startRadius = Math.hypot(
                     decorView.width.toDouble(),
                     decorView.height.toDouble()
             ).toFloat()
             LogUtils.d("CircularRevealDialogFragment createCircularReveal")
-            decorView.animate().setStartDelay(animatorDuration / 2).setDuration(animatorDuration / 2).alpha(0f)
+            decorView.animate().setStartDelay(animatorDuration / (if (wasRecreated) 3 else 2)).setDuration(animatorDuration / 2).alpha(0f)
             ViewAnimationUtils.createCircularReveal(decorView, startX, startY, startRadius, resources.getDimension(R.dimen.circularReveal_minRadius))
                     .setDuration(animatorDuration)
                     .also {
@@ -81,5 +83,10 @@ open class CircularRevealDialogFragment : DialogFragment() {
                     }
                     .start()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        wasRecreated = true
     }
 }
