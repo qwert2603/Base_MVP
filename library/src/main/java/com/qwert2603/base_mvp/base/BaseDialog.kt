@@ -1,5 +1,7 @@
 package com.qwert2603.base_mvp.base
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.annotation.StringRes
@@ -58,9 +60,11 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
     @SuppressLint("NewApi")
     override fun onStart() {
         super.onStart()
+        LogUtils.d("BaseDialog onStart")
         if (arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
         val startX = arguments.getInt(START_POSITION_X, -1)
         val startY = arguments.getInt(START_POSITION_Y, -1)
+        LogUtils.d("BaseDialog onStart $startX $startY")
         if (startX == -1 || startY == -1) return
         runOnLollipopOrHigher {
             val decorView = dialog.window.decorView
@@ -70,6 +74,7 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
                         resources.displayMetrics.heightPixels.toDouble()
                 ).toFloat()
                 arguments.putBoolean(START_ANIMATION_SHOWN, true)
+                LogUtils.d("BaseDialog onStart createCircularReveal $endRadius")
                 ViewAnimationUtils.createCircularReveal(decorView, startX, startY, 0f, endRadius).start()
             }
         }
@@ -86,7 +91,15 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
                     resources.displayMetrics.widthPixels.toDouble(),
                     resources.displayMetrics.heightPixels.toDouble()
             ).toFloat()
-            ViewAnimationUtils.createCircularReveal(decorView, startX, startY, endRadius, 0f).start()
+            ViewAnimationUtils.createCircularReveal(decorView, startX, startY, endRadius, 0f)
+                    .also {
+                        it.addListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator?) {
+                                dismiss()
+                            }
+                        })
+                    }
+                    .start()
         }
     }
 
