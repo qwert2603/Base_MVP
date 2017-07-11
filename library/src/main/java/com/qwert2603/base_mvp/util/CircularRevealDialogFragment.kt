@@ -43,6 +43,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
                 ).toFloat()
                 arguments.putBoolean(START_ANIMATION_SHOWN, true)
                 LogUtils.d("CircularRevealDialogFragment onStart createCircularReveal $endRadius")
+                decorView.animate().setStartDelay(0).setDuration(animatorDuration / 2).alpha(1f)
                 ViewAnimationUtils.createCircularReveal(decorView, screenStartX, screenStartY, resources.getDimension(R.dimen.circularReveal_minRadius), endRadius)
                         .setDuration(animatorDuration)
                         .start()
@@ -67,6 +68,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
                     decorView.height.toDouble()
             ).toFloat()
             LogUtils.d("CircularRevealDialogFragment createCircularReveal")
+            decorView.animate().setStartDelay(animatorDuration / 2).setDuration(animatorDuration / 2).alpha(0f)
             ViewAnimationUtils.createCircularReveal(decorView, startX, startY, startRadius, resources.getDimension(R.dimen.circularReveal_minRadius))
                     .setDuration(animatorDuration)
                     .also {
