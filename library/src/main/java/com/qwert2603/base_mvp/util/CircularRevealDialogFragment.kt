@@ -38,8 +38,8 @@ open class CircularRevealDialogFragment : DialogFragment() {
                 arguments.putInt(START_POSITION_X, screenStartX)
                 arguments.putInt(START_POSITION_Y, screenStartY)
                 val endRadius = Math.hypot(
-                        resources.displayMetrics.widthPixels.toDouble(),
-                        resources.displayMetrics.heightPixels.toDouble()
+                        decorView.width.toDouble(),
+                        decorView.height.toDouble()
                 ).toFloat()
                 arguments.putBoolean(START_ANIMATION_SHOWN, true)
                 LogUtils.d("CircularRevealDialogFragment onStart createCircularReveal $endRadius")
@@ -65,8 +65,8 @@ open class CircularRevealDialogFragment : DialogFragment() {
             val startX = arguments.getInt(START_POSITION_X, -1)
             val startY = arguments.getInt(START_POSITION_Y, -1)
             val startRadius = Math.hypot(
-                    resources.displayMetrics.widthPixels.toDouble(),
-                    resources.displayMetrics.heightPixels.toDouble()
+                    decorView.width.toDouble(),
+                    decorView.height.toDouble()
             ).toFloat()
             LogUtils.d("CircularRevealDialogFragment createCircularReveal")
             ViewAnimationUtils.createCircularReveal(decorView, startX, startY, startRadius, resources.getDimension(R.dimen.circularReveal_minRadius))
