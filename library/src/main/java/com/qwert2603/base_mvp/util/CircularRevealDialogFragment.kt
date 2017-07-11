@@ -53,15 +53,13 @@ open class CircularRevealDialogFragment : DialogFragment() {
     @SuppressLint("NewApi")
     protected fun runExitAnimation() {
         LogUtils.d("CircularRevealDialogFragment runExitAnimation")
-        val alertDialog = dialog as? AlertDialog
-        if (alertDialog != null) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {}
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {}
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {}
-        }
+        val alertDialog = dialog as? AlertDialog ?: return
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {}
+        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {}
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {}
         if (!arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
         runOnLollipopOrHigher {
-            val decorView = dialog.window.decorView
+            val decorView = alertDialog.window.decorView
             val startX = arguments.getInt(START_POSITION_X, -1)
             val startY = arguments.getInt(START_POSITION_Y, -1)
             val startRadius = Math.hypot(
