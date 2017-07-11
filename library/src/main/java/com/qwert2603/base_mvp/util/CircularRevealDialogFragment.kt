@@ -4,8 +4,10 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
 import android.view.ViewAnimationUtils
 import com.qwert2603.base_mvp.BuildConfig
+import com.qwert2603.base_mvp.R
 
 open class CircularRevealDialogFragment : DialogFragment() {
 
@@ -41,7 +43,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
                 ).toFloat()
                 arguments.putBoolean(START_ANIMATION_SHOWN, true)
                 LogUtils.d("CircularRevealDialogFragment onStart createCircularReveal $endRadius")
-                ViewAnimationUtils.createCircularReveal(decorView, screenStartX, screenStartY, 0f, endRadius)
+                ViewAnimationUtils.createCircularReveal(decorView, screenStartX, screenStartY, resources.getDimension(R.dimen.circularReveal_minRadius), endRadius)
                         .setDuration(animatorDuration)
                         .start()
             }
@@ -51,17 +53,23 @@ open class CircularRevealDialogFragment : DialogFragment() {
     @SuppressLint("NewApi")
     protected fun runExitAnimation() {
         LogUtils.d("CircularRevealDialogFragment runExitAnimation")
+        val alertDialog = dialog as? AlertDialog
+        if (alertDialog != null) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {}
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {}
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {}
+        }
         if (!arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
         runOnLollipopOrHigher {
             val decorView = dialog.window.decorView
             val startX = arguments.getInt(START_POSITION_X, -1)
             val startY = arguments.getInt(START_POSITION_Y, -1)
-            val endRadius = Math.hypot(
+            val startRadius = Math.hypot(
                     resources.displayMetrics.widthPixels.toDouble(),
                     resources.displayMetrics.heightPixels.toDouble()
             ).toFloat()
             LogUtils.d("CircularRevealDialogFragment createCircularReveal")
-            ViewAnimationUtils.createCircularReveal(decorView, startX, startY, endRadius, 0f)
+            ViewAnimationUtils.createCircularReveal(decorView, startX, startY, startRadius, resources.getDimension(R.dimen.circularReveal_minRadius))
                     .setDuration(animatorDuration)
                     .also {
                         it.addListener(object : AnimatorListenerAdapter() {
