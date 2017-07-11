@@ -15,6 +15,8 @@ open class CircularRevealDialogFragment : DialogFragment() {
         const val START_ANIMATION_SHOWN = BuildConfig.APPLICATION_ID + "START_ANIMATION_SHOWN"
     }
 
+    open protected val animatorDuration = 400L
+
     @SuppressLint("NewApi")
     override fun onStart() {
         super.onStart()
@@ -33,7 +35,9 @@ open class CircularRevealDialogFragment : DialogFragment() {
                 ).toFloat()
                 arguments.putBoolean(START_ANIMATION_SHOWN, true)
                 LogUtils.d("CircularRevealDialogFragment onStart createCircularReveal $endRadius")
-                ViewAnimationUtils.createCircularReveal(decorView, startX, startY, 0f, endRadius).start()
+                ViewAnimationUtils.createCircularReveal(decorView, startX, startY, 0f, endRadius)
+                        .setDuration(animatorDuration)
+                        .start()
             }
         }
     }
@@ -52,6 +56,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
             ).toFloat()
             LogUtils.d("CircularRevealDialogFragment createCircularReveal")
             ViewAnimationUtils.createCircularReveal(decorView, startX, startY, endRadius, 0f)
+                    .setDuration(animatorDuration)
                     .also {
                         it.addListener(object : AnimatorListenerAdapter() {
                             override fun onAnimationEnd(animation: Animator?) {
