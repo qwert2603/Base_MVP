@@ -3,8 +3,8 @@ package com.qwert2603.base_mvp.util
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
 import android.view.ViewAnimationUtils
 import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
