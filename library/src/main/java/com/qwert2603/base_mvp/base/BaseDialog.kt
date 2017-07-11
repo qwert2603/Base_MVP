@@ -1,23 +1,21 @@
 package com.qwert2603.base_mvp.base
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewAnimationUtils
 import android.widget.Toast
-import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
-import com.qwert2603.base_mvp.util.*
+import com.qwert2603.base_mvp.util.CircularRevealDialogFragment
+import com.qwert2603.base_mvp.util.LogUtils
+import com.qwert2603.base_mvp.util.inflate
+import com.qwert2603.base_mvp.util.showIfNotYet
 import kotlinx.android.synthetic.main.dialog_base.view.*
 import java.util.*
 
-abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragment(), BaseView {
+abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : CircularRevealDialogFragment(), BaseView {
 
     protected abstract var presenter: P
 
@@ -55,52 +53,6 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
             presenter.unbindView()
         }
         super.onDestroy()
-    }
-
-    @SuppressLint("NewApi")
-    override fun onStart() {
-        super.onStart()
-        LogUtils.d("BaseDialog onStart")
-        if (arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
-        val startX = arguments.getInt(START_POSITION_X, -1)
-        val startY = arguments.getInt(START_POSITION_Y, -1)
-        LogUtils.d("BaseDialog onStart $startX $startY")
-        if (startX == -1 || startY == -1) return
-        runOnLollipopOrHigher {
-            val decorView = dialog.window.decorView
-            decorView.setOnPreDrawAction {
-                val endRadius = Math.hypot(
-                        resources.displayMetrics.widthPixels.toDouble(),
-                        resources.displayMetrics.heightPixels.toDouble()
-                ).toFloat()
-                arguments.putBoolean(START_ANIMATION_SHOWN, true)
-                LogUtils.d("BaseDialog onStart createCircularReveal $endRadius")
-                ViewAnimationUtils.createCircularReveal(decorView, startX, startY, 0f, endRadius).start()
-            }
-        }
-    }
-
-    @SuppressLint("NewApi")
-    protected fun runExitAnimation() {
-        if (!arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
-        runOnLollipopOrHigher {
-            val decorView = dialog.window.decorView
-            val startX = arguments.getInt(START_POSITION_X, -1)
-            val startY = arguments.getInt(START_POSITION_Y, -1)
-            val endRadius = Math.hypot(
-                    resources.displayMetrics.widthPixels.toDouble(),
-                    resources.displayMetrics.heightPixels.toDouble()
-            ).toFloat()
-            ViewAnimationUtils.createCircularReveal(decorView, startX, startY, endRadius, 0f)
-                    .also {
-                        it.addListener(object : AnimatorListenerAdapter() {
-                            override fun onAnimationEnd(animation: Animator?) {
-                                dismiss()
-                            }
-                        })
-                    }
-                    .start()
-        }
     }
 
     override fun onResume() {
@@ -170,10 +122,6 @@ abstract class BaseDialog<V : BaseView, P : BasePresenter<*, V>> : DialogFragmen
     }
 
     companion object {
-
-        const val START_POSITION_X = BuildConfig.APPLICATION_ID + "START_POSITION_X"
-        const val START_POSITION_Y = BuildConfig.APPLICATION_ID + "START_POSITION_Y"
-        const val START_ANIMATION_SHOWN = BuildConfig.APPLICATION_ID + "START_ANIMATION_SHOWN"
 
         private const val POSITION_LOADING = 0
         private const val POSITION_LOADING_ERROR = 1
