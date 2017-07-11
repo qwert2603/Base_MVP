@@ -10,7 +10,7 @@ interface Navigation {
     fun removeBackStackItem(backStackItem: BackStackItem, sharedElements: List<View> = emptyList())
     fun isInBackStack(backStackItem: BackStackItem): Boolean
 
-    fun showDialog(dialog: DialogFragment, tag: String)
+    fun showDialog(dialog: DialogFragment, tag: String, startX: Int? = null, startY: Int? = null)
 
     fun hideKeyboard(removeFocus: Boolean = true)
     fun showKeyboard(editText: EditText)

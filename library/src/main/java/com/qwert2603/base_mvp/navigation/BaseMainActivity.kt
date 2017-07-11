@@ -21,6 +21,7 @@ import android.widget.EditText
 import com.qwert2603.base_mvp.BaseApplication
 import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
+import com.qwert2603.base_mvp.base.BaseDialog
 import com.qwert2603.base_mvp.base.recyclerview.ClickListener
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
@@ -272,9 +273,11 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     override fun isInBackStack(backStackItem: BackStackItem) = backStackItem.tag in backStack.map { it.tag }
 
-    override fun showDialog(dialog: DialogFragment, tag: String) {
+    override fun showDialog(dialog: DialogFragment, tag: String, startX: Int?, startY: Int?) {
         blockUI(0, {
             blockUI(1000)
+            startX?.let { dialog.arguments.putInt(BaseDialog.START_POSITION_X, it) }
+            startY?.let { dialog.arguments.putInt(BaseDialog.START_POSITION_Y, it) }
             dialog.show(supportFragmentManager, tag)
         })
     }
