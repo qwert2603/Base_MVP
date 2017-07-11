@@ -17,7 +17,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
         const val START_ANIMATION_SHOWN = BuildConfig.APPLICATION_ID + "START_ANIMATION_SHOWN"
     }
 
-    open protected val animatorDuration = 500L
+    open protected val animatorDuration = 300L
 
     @SuppressLint("NewApi")
     override fun onStart() {
