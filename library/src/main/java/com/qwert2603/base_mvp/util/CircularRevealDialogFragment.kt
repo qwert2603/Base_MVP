@@ -15,7 +15,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
         const val START_ANIMATION_SHOWN = BuildConfig.APPLICATION_ID + "START_ANIMATION_SHOWN"
     }
 
-    open protected val animatorDuration = 400L
+    open protected val animatorDuration = 500L
 
     @SuppressLint("NewApi")
     override fun onStart() {
@@ -29,13 +29,19 @@ open class CircularRevealDialogFragment : DialogFragment() {
         runOnLollipopOrHigher {
             val decorView = dialog.window.decorView
             decorView.setOnPreDrawAction {
+                val locationOnScreen = arrayOf(0, 0).toIntArray()
+                decorView.getLocationOnScreen(locationOnScreen)
+                val screenStartX = startX - locationOnScreen[0]
+                val screenStartY = startY - locationOnScreen[1]
+                arguments.putInt(START_POSITION_X, screenStartX)
+                arguments.putInt(START_POSITION_Y, screenStartY)
                 val endRadius = Math.hypot(
                         resources.displayMetrics.widthPixels.toDouble(),
                         resources.displayMetrics.heightPixels.toDouble()
                 ).toFloat()
                 arguments.putBoolean(START_ANIMATION_SHOWN, true)
                 LogUtils.d("CircularRevealDialogFragment onStart createCircularReveal $endRadius")
-                ViewAnimationUtils.createCircularReveal(decorView, startX, startY, 0f, endRadius)
+                ViewAnimationUtils.createCircularReveal(decorView, screenStartX, screenStartY, 0f, endRadius)
                         .setDuration(animatorDuration)
                         .start()
             }
