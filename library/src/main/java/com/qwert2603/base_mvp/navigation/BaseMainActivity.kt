@@ -276,8 +276,10 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
     override fun showDialog(dialog: DialogFragment, tag: String, startX: Int?, startY: Int?) {
         blockUI(0, {
             blockUI(1000)
-            startX?.let { dialog.arguments.putInt(BaseDialog.START_POSITION_X, it) }
-            startY?.let { dialog.arguments.putInt(BaseDialog.START_POSITION_Y, it) }
+            val args: Bundle = dialog.arguments ?: Bundle()
+            startX?.let { args.putInt(BaseDialog.START_POSITION_X, it) }
+            startY?.let { args.putInt(BaseDialog.START_POSITION_Y, it) }
+            dialog.arguments = args
             dialog.show(supportFragmentManager, tag)
         })
     }
