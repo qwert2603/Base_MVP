@@ -116,17 +116,31 @@ abstract class BaseFragment<V : BaseView, out P : BasePresenter<*, V>> : Fragmen
     }
 
     override fun notifyRefreshingError() {
-        val snackbar = Snackbar.make(viewForSnackbar(), R.string.refreshing_error_text, Snackbar.LENGTH_SHORT)
+        Snackbar.make(viewForSnackbar(), R.string.refreshing_error_text, Snackbar.LENGTH_SHORT)
                 .setAction(R.string.retry_text, { presenter.onReloadClicked() })
-        snackbar.addCallback(object : Snackbar.Callback() {
-            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                onLoadingErrorSnackbarDismissed()
-            }
-        })
-        snackbar.show()
+                .also {
+                    it.addCallback(object : Snackbar.Callback() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            onSnackbarDismissed()
+                        }
+                    })
+                }
+                .show()
     }
 
-    protected open fun onLoadingErrorSnackbarDismissed() {}
+    protected open fun onSnackbarDismissed() {}
+
+    protected fun showSnackbar(@StringRes stringRes: Int) {
+        Snackbar.make(viewForSnackbar(), stringRes, Snackbar.LENGTH_SHORT)
+                .also {
+                    it.addCallback(object : Snackbar.Callback() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            onSnackbarDismissed()
+                        }
+                    })
+                }
+                .show()
+    }
 
     protected fun makeToast(@StringRes stringRes: Int) {
         Toast.makeText(context, stringRes, Toast.LENGTH_SHORT).show()
