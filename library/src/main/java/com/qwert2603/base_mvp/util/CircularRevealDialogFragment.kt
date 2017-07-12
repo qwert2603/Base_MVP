@@ -84,8 +84,8 @@ open class CircularRevealDialogFragment : DialogFragment() {
 
         runOnLollipopOrHigher {
             val wasRecreated = arguments.getBoolean(WAS_RECREATED, false)
-            val startX = if (wasRecreated) decorView.getCenterX() else arguments.getInt(START_POSITION_X)
-            val startY = if (wasRecreated) decorView.getCenterY() else arguments.getInt(START_POSITION_Y)
+            val startX = if (wasRecreated) decorView.width / 2 else arguments.getInt(START_POSITION_X)
+            val startY = if (wasRecreated) decorView.height / 2 else arguments.getInt(START_POSITION_Y)
             val startRadius = Math.hypot(
                     decorView.width.toDouble(),
                     decorView.height.toDouble()
@@ -113,6 +113,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
     }
 
     protected fun android.app.AlertDialog.configAlertDialogForRevealAnimation(): android.app.AlertDialog {
+        this.configDialogForRevealAnimation()
         setOnShowListener {
             getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
                 if (onButtonClick(DialogInterface.BUTTON_POSITIVE)) runExitAnimation()
