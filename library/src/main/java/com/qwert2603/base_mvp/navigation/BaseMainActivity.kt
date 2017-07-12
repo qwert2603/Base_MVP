@@ -287,11 +287,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         if (resumedFragment?.isBackPressConsumed() ?: false) {
             return
         }
-        if (backStack.dropLastWhile { it.asNested }.size > 1) {
-            goBack()
-        } else {
-            finish()
-        }
+        goBack()
     }
 
     private fun goBack() {
