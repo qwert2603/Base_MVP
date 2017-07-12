@@ -267,7 +267,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         modifyBackStack(backStack.filter { it.tag != backStackItem.tag }, sharedElements)
     }
 
-    override fun isInBackStack(backStackItem: BackStackItem) = backStackItem.tag in backStack.map { it.tag }
+    override fun isInBackStack(tagFilter: (String) -> Boolean) = backStack.map { it.tag }.any(tagFilter)
 
     override fun showDialog(dialog: DialogFragment, tag: String, startX: Int?, startY: Int?) {
         blockUI(0, {
