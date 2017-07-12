@@ -3,9 +3,10 @@ package com.qwert2603.base_mvp.util
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.view.KeyEvent
 import android.view.ViewAnimationUtils
 import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
@@ -55,14 +56,27 @@ open class CircularRevealDialogFragment : DialogFragment() {
 
     @SuppressLint("NewApi")
     protected fun runExitAnimation() {
-        LogUtils.d("CircularRevealDialogFragment runExitAnimation")
-        val alertDialog = dialog as? AlertDialog ?: return
-        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {}
-        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {}
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {}
+        LogUtils.d("CircularRevealDialogFragment runExitAnimation $dialog")
+
+        val alertDialog = dialog as? android.app.AlertDialog
+        alertDialog?.apply {
+            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {}
+            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {}
+            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {}
+        }
+
+        val alertDialogSupport = dialog as? android.support.v7.app.AlertDialog
+        alertDialog?.apply {
+            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {}
+            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {}
+            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {}
+        }
+
         if (!arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
+
+        val decorView = alertDialog?.window?.decorView ?: alertDialogSupport?.window?.decorView ?: return
+
         runOnLollipopOrHigher {
-            val decorView = alertDialog.window.decorView
             val startX = if (wasRecreated) decorView.getCenterX() else arguments.getInt(START_POSITION_X)
             val startY = if (wasRecreated) decorView.getCenterY() else arguments.getInt(START_POSITION_Y)
             val startRadius = Math.hypot(
@@ -87,6 +101,58 @@ open class CircularRevealDialogFragment : DialogFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        LogUtils.d("CircularRevealDialogFragment onSaveInstanceState")
         wasRecreated = true
+    }
+
+    /**
+     * @return true if call [runExitAnimation].
+     */
+    open protected fun onButtonClick(which: Int): Boolean = true
+
+    protected fun android.app.AlertDialog.configForRevealAnimation(): android.app.AlertDialog {
+        setCanceledOnTouchOutside(false)
+        setOnShowListener {
+            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                if (onButtonClick(android.app.AlertDialog.BUTTON_POSITIVE)) runExitAnimation()
+            }
+            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_NEUTRAL)) runExitAnimation()
+            }
+            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_NEGATIVE)) runExitAnimation()
+            }
+        }
+        setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                runExitAnimation()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
+        return this
+    }
+
+    protected fun android.support.v7.app.AlertDialog.configForRevealAnimation(): android.support.v7.app.AlertDialog {
+        setCanceledOnTouchOutside(false)
+        setOnShowListener {
+            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_POSITIVE)) runExitAnimation()
+            }
+            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_NEUTRAL)) runExitAnimation()
+            }
+            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_NEGATIVE)) runExitAnimation()
+            }
+        }
+        setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                runExitAnimation()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
+        return this
     }
 }
