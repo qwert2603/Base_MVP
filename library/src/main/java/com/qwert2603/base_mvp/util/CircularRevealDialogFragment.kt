@@ -18,10 +18,10 @@ open class CircularRevealDialogFragment : DialogFragment() {
         const val START_POSITION_X = BuildConfig.APPLICATION_ID + "START_POSITION_X"
         const val START_POSITION_Y = BuildConfig.APPLICATION_ID + "START_POSITION_Y"
         const val START_ANIMATION_SHOWN = BuildConfig.APPLICATION_ID + "START_ANIMATION_SHOWN"
+        const val WAS_RECREATED = BuildConfig.APPLICATION_ID + "WAS_RECREATED"
     }
 
     open protected val animatorDuration = 300L
-    private var wasRecreated = false
 
     @SuppressLint("NewApi")
     override fun onStart() {
@@ -78,6 +78,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
         val decorView = alertDialog?.window?.decorView ?: alertDialogSupport?.window?.decorView ?: return
 
         runOnLollipopOrHigher {
+            val wasRecreated = arguments.getBoolean(WAS_RECREATED, false)
             val startX = if (wasRecreated) decorView.getCenterX() else arguments.getInt(START_POSITION_X)
             val startY = if (wasRecreated) decorView.getCenterY() else arguments.getInt(START_POSITION_Y)
             val startRadius = Math.hypot(
@@ -103,7 +104,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         LogUtils.d("CircularRevealDialogFragment onSaveInstanceState")
-        wasRecreated = true
+        arguments.putBoolean(WAS_RECREATED, true)
     }
 
     /**
