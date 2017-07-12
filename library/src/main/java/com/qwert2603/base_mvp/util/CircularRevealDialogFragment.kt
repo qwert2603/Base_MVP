@@ -3,6 +3,7 @@ package com.qwert2603.base_mvp.util
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -110,31 +111,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
      */
     open protected fun onButtonClick(which: Int): Boolean = true
 
-    protected fun android.app.AlertDialog.configForRevealAnimation(): android.app.AlertDialog {
-        setCanceledOnTouchOutside(false)
-        setOnShowListener {
-            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-                if (onButtonClick(android.app.AlertDialog.BUTTON_POSITIVE)) runExitAnimation()
-            }
-            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {
-                if (onButtonClick(DialogInterface.BUTTON_NEUTRAL)) runExitAnimation()
-            }
-            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {
-                if (onButtonClick(DialogInterface.BUTTON_NEGATIVE)) runExitAnimation()
-            }
-        }
-        setOnKeyListener { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                runExitAnimation()
-                return@setOnKeyListener true
-            }
-            return@setOnKeyListener false
-        }
-        return this
-    }
-
-    protected fun android.support.v7.app.AlertDialog.configForRevealAnimation(): android.support.v7.app.AlertDialog {
-        setCanceledOnTouchOutside(false)
+    protected fun android.app.AlertDialog.configAlertDialogForRevealAnimation(): android.app.AlertDialog {
         setOnShowListener {
             getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
                 if (onButtonClick(DialogInterface.BUTTON_POSITIVE)) runExitAnimation()
@@ -146,6 +123,27 @@ open class CircularRevealDialogFragment : DialogFragment() {
                 if (onButtonClick(DialogInterface.BUTTON_NEGATIVE)) runExitAnimation()
             }
         }
+        return this
+    }
+
+    protected fun android.support.v7.app.AlertDialog.configAlertDialogForRevealAnimation(): android.support.v7.app.AlertDialog {
+        this.configDialogForRevealAnimation()
+        setOnShowListener {
+            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_POSITIVE)) runExitAnimation()
+            }
+            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_NEUTRAL)) runExitAnimation()
+            }
+            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {
+                if (onButtonClick(DialogInterface.BUTTON_NEGATIVE)) runExitAnimation()
+            }
+        }
+        return this
+    }
+
+    private fun Dialog.configDialogForRevealAnimation(): Dialog {
+        setCanceledOnTouchOutside(false)
         setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 runExitAnimation()
