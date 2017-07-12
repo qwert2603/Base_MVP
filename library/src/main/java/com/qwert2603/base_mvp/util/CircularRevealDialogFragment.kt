@@ -23,6 +23,11 @@ open class CircularRevealDialogFragment : DialogFragment() {
 
     open protected val animatorDuration = 300L
 
+    /**
+     * @return true if call [runExitAnimation].
+     */
+    open protected fun onButtonClick(which: Int): Boolean = true
+
     @SuppressLint("NewApi")
     override fun onStart() {
         super.onStart()
@@ -106,11 +111,6 @@ open class CircularRevealDialogFragment : DialogFragment() {
         LogUtils.d("CircularRevealDialogFragment onSaveInstanceState")
         arguments.putBoolean(WAS_RECREATED, true)
     }
-
-    /**
-     * @return true if call [runExitAnimation].
-     */
-    open protected fun onButtonClick(which: Int): Boolean = true
 
     protected fun android.app.AlertDialog.configAlertDialogForRevealAnimation(): android.app.AlertDialog {
         setOnShowListener {
