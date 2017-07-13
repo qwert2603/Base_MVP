@@ -10,7 +10,7 @@ import java.util.*
 
 abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerViewHolder<M, *, *>> : RecyclerView.Adapter<VH>() {
 
-    var recyclerView: RecyclerView? = null
+    open var recyclerView: RecyclerView? = null
 
     open var modelList: List<M> = emptyList()
         set(value) {
@@ -58,6 +58,7 @@ abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerVi
     }
 
     override final fun setHasStableIds(hasStableIds: Boolean) {
+        if (hasStableIds == this.hasStableIds()) return
         super.setHasStableIds(hasStableIds)
     }
 
