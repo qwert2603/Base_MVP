@@ -65,25 +65,25 @@ open class CircularRevealDialogFragment : DialogFragment() {
     protected fun runExitAnimation() {
         LogUtils.d("CircularRevealDialogFragment runExitAnimation $dialog")
 
-        val alertDialog = dialog as? android.app.AlertDialog
-        alertDialog?.apply {
-            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {}
-            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {}
-            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {}
-        }
-
-        val alertDialogSupport = dialog as? android.support.v7.app.AlertDialog
-        alertDialog?.apply {
-            getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {}
-            getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {}
-            getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {}
-        }
-
-        if (!arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
-
-        val decorView = alertDialog?.window?.decorView ?: alertDialogSupport?.window?.decorView ?: return
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val alertDialog = dialog as? android.app.AlertDialog
+            alertDialog?.apply {
+                getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {}
+                getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {}
+                getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {}
+            }
+
+            val alertDialogSupport = dialog as? android.support.v7.app.AlertDialog
+            alertDialog?.apply {
+                getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener {}
+                getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener {}
+                getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {}
+            }
+
+            if (!arguments.getBoolean(START_ANIMATION_SHOWN, false)) return
+
+            val decorView = alertDialog?.window?.decorView ?: alertDialogSupport?.window?.decorView ?: return
+
             val wasRecreated = arguments.getBoolean(WAS_RECREATED, false)
             val startX = if (wasRecreated) decorView.width / 2 else arguments.getInt(START_POSITION_X)
             val startY = if (wasRecreated) decorView.height / 2 else arguments.getInt(START_POSITION_Y)
