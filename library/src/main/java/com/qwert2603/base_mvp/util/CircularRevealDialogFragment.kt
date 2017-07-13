@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.KeyEvent
@@ -82,7 +83,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
 
         val decorView = alertDialog?.window?.decorView ?: alertDialogSupport?.window?.decorView ?: return
 
-        runOnLollipopOrHigher {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val wasRecreated = arguments.getBoolean(WAS_RECREATED, false)
             val startX = if (wasRecreated) decorView.width / 2 else arguments.getInt(START_POSITION_X)
             val startY = if (wasRecreated) decorView.height / 2 else arguments.getInt(START_POSITION_Y)
@@ -103,6 +104,8 @@ open class CircularRevealDialogFragment : DialogFragment() {
                         })
                     }
                     .start()
+        } else {
+            dismiss()
         }
     }
 
