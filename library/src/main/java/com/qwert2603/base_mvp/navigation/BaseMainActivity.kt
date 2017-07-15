@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -233,7 +234,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                                     || backStackChange.from.first().tag != backStackChange.to.first().tag
                                     || it.getBackStackItem().asNested && backStackChange.to.filter { !it.asNested }.size == 1
                             @SuppressLint("NewApi")
-                            it.enterTransition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
+                            it.enterTransition =  createFragmentTransition(moveStart)
                         }
 
                 (fragmentsToDisappear - fragmentsToAppear)
@@ -241,16 +242,18 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                             it as BackStackFragment<*, *>
                             val moveStart = it.getBackStackItem().tag in backStackChange.to.map { it.tag } || backStackChange.from.first().tag != backStackChange.to.first().tag
                             @SuppressLint("NewApi")
-                            it.exitTransition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
+                            it.exitTransition = createFragmentTransition(moveStart)
                         }
             }
         }
 
         translateFragment(0f) // we need it because otherwise fragment.enterTransition finishes in wrong position on screen.
         fragmentTransaction.commitAllowingStateLoss()
-
-        LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
     }
+
+    @SuppressLint("RtlHardcoded")
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    open protected fun createFragmentTransition(moveStart: Boolean): Transition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
 
     override fun navigateTo(backStackItem: BackStackItem, delay: Boolean, sharedElements: List<View>) {
         LogUtils.d("navigateTo $backStackItem")

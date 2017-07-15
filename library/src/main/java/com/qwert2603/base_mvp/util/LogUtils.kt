@@ -6,22 +6,31 @@ object LogUtils {
 
     const val APP_TAG = "AASSDD"
     const val ERROR_MSG = "ERROR!!!"
+    var enableLogging = true
 
-    fun d(s: String) {
-        d(APP_TAG, s)
+    fun d(msg: String) {
+        d(APP_TAG, msg)
     }
 
-    fun d(tag: String, s: String) {
-        Log.d(tag, s)
+    fun d(tag: String, msg: String) {
+        Log.d(tag, msg)
+    }
+
+    fun d(msg: () -> String) {
+        if (enableLogging) d(APP_TAG, msg)
+    }
+
+    fun d(tag: String, msg: () -> String) {
+        if (enableLogging) Log.d(tag, msg())
     }
 
     @JvmOverloads
-    fun e(s: String = ERROR_MSG, t: Throwable? = null) {
-        Log.e(APP_TAG, "$s $t", t)
+    fun e(msg: String = ERROR_MSG, t: Throwable? = null) {
+        if (enableLogging) Log.e(APP_TAG, "$msg $t", t)
     }
 
     fun printCurrentStack() {
-        Log.v(APP_TAG, "", Exception())
+        if (enableLogging) Log.v(APP_TAG, "", Exception())
     }
 
 }
