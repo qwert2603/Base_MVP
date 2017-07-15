@@ -174,7 +174,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         backStackChange.from.forEach { backStackItem ->
             val fragment: Fragment? = supportFragmentManager.findFragmentByTag(backStackItem.tag)
             if (fragment != null) {
-                if (!backStackChange.to.map { it.tag }.contains(backStackItem.tag)) {
+                if (backStackItem.tag !in backStackChange.to.map { it.tag }) {
                     fragmentTransaction.remove(fragment)
                     fragmentsToDisappear.add(fragment)
                 } else if (backStackItem.tag != backStackChange.to.last().tag && !fragment.isDetached) {
@@ -184,9 +184,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             }
         }
 
-        backStackChange.to.forEachIndexed { i, backStackItem ->
+        backStackChange.to.forEach { backStackItem ->
             var fragment: Fragment? = supportFragmentManager.findFragmentByTag(backStackItem.tag)
-            if (i == backStackChange.to.size - 1) {
+            if (backStackItem.tag == backStackChange.to.last().tag) {
                 if (fragment != null) {
                     if (fragment.isDetached) {
                         fragmentTransaction.attach(fragment)
@@ -234,7 +234,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                                     || backStackChange.from.first().tag != backStackChange.to.first().tag
                                     || it.getBackStackItem().asNested && backStackChange.to.filter { !it.asNested }.size == 1
                             @SuppressLint("NewApi")
-                            it.enterTransition =  createFragmentTransition(moveStart)
+                            it.enterTransition = createFragmentTransition(moveStart)
                         }
 
                 (fragmentsToDisappear - fragmentsToAppear)
