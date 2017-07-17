@@ -18,6 +18,7 @@ open class BasePreferenceHelper {
             val gson: Gson,
             val noSavedValueExceptionProvider: () -> Exception = { KeyValueHelper.NoSavedValueException(key) }
     ) {
+        //todo: use BehaviorSubject.
         private var value: T? = null
             @Synchronized set
 

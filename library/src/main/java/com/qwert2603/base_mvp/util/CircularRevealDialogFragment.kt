@@ -61,6 +61,7 @@ open class CircularRevealDialogFragment : DialogFragment() {
         }
     }
 
+    //todo: rename to dismiss (override).
     @SuppressLint("NewApi")
     protected fun runExitAnimation() {
         LogUtils.d("CircularRevealDialogFragment runExitAnimation $dialog")

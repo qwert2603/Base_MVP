@@ -7,8 +7,12 @@ class OneShotFlag {
             if (readId == null) true.also { readId = vsId }
             else readId == vsId
 
+    fun cancelIfNotUsed() {
+        readId = -1L
+    }
+
     companion object {
-        val USED = OneShotFlag().also { it.readId = -1L }
+        val CANCELLED = OneShotFlag().also { it.cancelIfNotUsed() }
     }
 }
 

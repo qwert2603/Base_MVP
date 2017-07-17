@@ -7,6 +7,7 @@ class SearchHelper<T>(
         private val searchFromServer: (String) -> Single<List<T>>,
         private val nameResult: (T) -> String
 ) {
+    //todo: use BehaviorSubject.
     @Volatile private var cache = emptyList<T>()
 
     /** empty query means "find all". */

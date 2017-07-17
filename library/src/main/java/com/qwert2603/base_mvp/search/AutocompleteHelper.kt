@@ -42,7 +42,7 @@ class AutocompleteHelper<T>(
         )
                 .filter { filter() }
                 .switchMap { (cancelPrevious, showAll, search) ->
-                    LogUtils.d("AutocompleteHelper $cancelPrevious $showAll $search")
+                    LogUtils.d({ "AutocompleteHelper $cancelPrevious $showAll $search" })
                     val cancel = Observable.just(State.Cancel)
                     if (cancelPrevious) return@switchMap cancel
                     if (!showAll) {

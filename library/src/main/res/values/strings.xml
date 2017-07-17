@@ -1,10 +1,4 @@
 <resources>
-
-    <string name="error_text">Ошибка</string>
-    <string name="refreshing_error_text">Ошибка обновления</string>
-    <string name="retry_text">Повторить загрузку</string>
-    <string name="empty_list_text">Список пуст</string>
     <string name="nothing_found_text">Ничего не найдено</string>
     <string name="suggestions_loading_error_text">Ошибка при загрузке!</string>
-
 </resources>

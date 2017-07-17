@@ -44,7 +44,7 @@ class AutocompleteUI(
 }
 
 fun AutocompleteUI.suggestionsConsumer() = Consumer<AutocompleteHelper.State> {
-    LogUtils.d("_suggestionsConsumer $it")
+    LogUtils.d({ "_suggestionsConsumer $it" })
     when (it) {
         AutocompleteHelper.State.Cancel -> {
             autoCompleteTextView.dismissDropDown()

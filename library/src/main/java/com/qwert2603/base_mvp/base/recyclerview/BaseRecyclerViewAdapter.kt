@@ -6,7 +6,6 @@ import android.support.v7.util.ListUpdateCallback
 import android.support.v7.widget.RecyclerView
 import com.qwert2603.base_mvp.model.IdentifiableLong
 import com.qwert2603.base_mvp.util.LogUtils
-import java.util.*
 
 abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerViewHolder<M>> : RecyclerView.Adapter<VH>() {
 
@@ -15,7 +14,7 @@ abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerVi
     open var modelList: List<M> = emptyList()
         set(value) {
             val oldList = field
-            field = ArrayList(value)
+            field = value
 
             val b = SystemClock.elapsedRealtime()
             val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
@@ -29,23 +28,25 @@ abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerVi
             if (time > 10) {
                 LogUtils.e("DiffUtil.calculateDiff is too long: $time ms")
             }
-            diffResult.dispatchUpdatesTo(object : ListUpdateCallback {
-                override fun onMoved(fromPosition: Int, toPosition: Int) {
-                    LogUtils.d("ListUpdateCallback onMoved $fromPosition $toPosition ${this@BaseRecyclerViewAdapter.javaClass}")
-                }
+            if (LogUtils.enableLogging) {
+                diffResult.dispatchUpdatesTo(object : ListUpdateCallback {
+                    override fun onMoved(fromPosition: Int, toPosition: Int) {
+                        LogUtils.d("ListUpdateCallback onMoved $fromPosition $toPosition ${this@BaseRecyclerViewAdapter.javaClass}")
+                    }
 
-                override fun onChanged(position: Int, count: Int, payload: Any?) {
-                    LogUtils.d("ListUpdateCallback onChanged $position $count ${this@BaseRecyclerViewAdapter.javaClass}")
-                }
+                    override fun onChanged(position: Int, count: Int, payload: Any?) {
+                        LogUtils.d("ListUpdateCallback onChanged $position $count ${this@BaseRecyclerViewAdapter.javaClass}")
+                    }
 
-                override fun onInserted(position: Int, count: Int) {
-                    LogUtils.d("ListUpdateCallback onInserted $position $count ${this@BaseRecyclerViewAdapter.javaClass}")
-                }
+                    override fun onInserted(position: Int, count: Int) {
+                        LogUtils.d("ListUpdateCallback onInserted $position $count ${this@BaseRecyclerViewAdapter.javaClass}")
+                    }
 
-                override fun onRemoved(position: Int, count: Int) {
-                    LogUtils.d("ListUpdateCallback onRemoved $position $count ${this@BaseRecyclerViewAdapter.javaClass}")
-                }
-            })
+                    override fun onRemoved(position: Int, count: Int) {
+                        LogUtils.d("ListUpdateCallback onRemoved $position $count ${this@BaseRecyclerViewAdapter.javaClass}")
+                    }
+                })
+            }
             diffResult.dispatchUpdatesTo(this@BaseRecyclerViewAdapter)
         }
 
@@ -63,15 +64,10 @@ abstract class BaseRecyclerViewAdapter<M : IdentifiableLong, VH : BaseRecyclerVi
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.adapter = this
-        val model = modelList[position]
-        holder.bind(model)
+        holder.bind(modelList[position])
     }
 
-    override fun getItemCount(): Int {
-        return modelList.size
-    }
+    override fun getItemCount() = modelList.size
 
-    override fun getItemId(position: Int): Long {
-        return modelList[position].id
-    }
+    override fun getItemId(position: Int) = modelList[position].id
 }

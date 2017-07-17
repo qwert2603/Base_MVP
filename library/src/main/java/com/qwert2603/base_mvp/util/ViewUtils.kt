@@ -18,10 +18,7 @@ fun ViewAnimator.showIfNotYet(child: Int) {
 
 fun TextView.setTextIfNotYet(text: String) {
     if (text != this.text.toString()) {
-        LogUtils.d("TextView.setTextIfNotYet $text")
         this.text = text
-    } else {
-        LogUtils.d("TextView.setTextIfNotYet text == this.text.toString()")
     }
 }
 

@@ -9,11 +9,11 @@ object LogUtils {
     var enableLogging = true
 
     fun d(msg: String) {
-        d(APP_TAG, msg)
+        if (enableLogging) d(APP_TAG, msg)
     }
 
     fun d(tag: String, msg: String) {
-        Log.d(tag, msg)
+        if (enableLogging) Log.d(tag, msg)
     }
 
     fun d(msg: () -> String) {
