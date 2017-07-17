@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -23,10 +24,7 @@ import com.qwert2603.base_mvp.BuildConfig
 import com.qwert2603.base_mvp.R
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationAdapter
 import com.qwert2603.base_mvp.navigation.navigation_adapter.NavigationItem
-import com.qwert2603.base_mvp.util.LogUtils
-import com.qwert2603.base_mvp.util.inflate
-import com.qwert2603.base_mvp.util.runOnLollipopOrHigher
-import com.qwert2603.base_mvp.util.setOnPreDrawAction
+import com.qwert2603.base_mvp.util.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -173,7 +171,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         backStackChange.from.forEach { backStackItem ->
             val fragment: Fragment? = supportFragmentManager.findFragmentByTag(backStackItem.tag)
             if (fragment != null) {
-                if (!backStackChange.to.map { it.tag }.contains(backStackItem.tag)) {
+                if (backStackItem.tag !in backStackChange.to.map { it.tag }) {
                     fragmentTransaction.remove(fragment)
                     fragmentsToDisappear.add(fragment)
                 } else if (backStackItem.tag != backStackChange.to.last().tag && !fragment.isDetached) {
@@ -183,9 +181,9 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             }
         }
 
-        backStackChange.to.forEachIndexed { i, backStackItem ->
+        backStackChange.to.forEach { backStackItem ->
             var fragment: Fragment? = supportFragmentManager.findFragmentByTag(backStackItem.tag)
-            if (i == backStackChange.to.size - 1) {
+            if (backStackItem.tag == backStackChange.to.last().tag) {
                 if (fragment != null) {
                     if (fragment.isDetached) {
                         fragmentTransaction.attach(fragment)
@@ -233,7 +231,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                                     || backStackChange.from.first().tag != backStackChange.to.first().tag
                                     || it.getBackStackItem().asNested && backStackChange.to.filter { !it.asNested }.size == 1
                             @SuppressLint("NewApi")
-                            it.enterTransition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
+                            it.enterTransition = createFragmentTransition(moveStart)
                         }
 
                 (fragmentsToDisappear - fragmentsToAppear)
@@ -241,16 +239,18 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                             it as BackStackFragment<*, *>
                             val moveStart = it.getBackStackItem().tag in backStackChange.to.map { it.tag } || backStackChange.from.first().tag != backStackChange.to.first().tag
                             @SuppressLint("NewApi")
-                            it.exitTransition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
+                            it.exitTransition = createFragmentTransition(moveStart)
                         }
             }
         }
 
         translateFragment(0f) // we need it because otherwise fragment.enterTransition finishes in wrong position on screen.
         fragmentTransaction.commitAllowingStateLoss()
-
-        LogUtils.d("supportFragmentManager.fragments == ${supportFragmentManager.fragments}")
     }
+
+    @SuppressLint("RtlHardcoded")
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    open protected fun createFragmentTransition(moveStart: Boolean): Transition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
 
     override fun navigateTo(backStackItem: BackStackItem, delay: Boolean, sharedElements: List<View>) {
         LogUtils.d("navigateTo $backStackItem")
@@ -267,11 +267,15 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         modifyBackStack(backStack.filter { it.tag != backStackItem.tag }, sharedElements)
     }
 
-    override fun isInBackStack(backStackItem: BackStackItem) = backStackItem.tag in backStack.map { it.tag }
+    override fun isInBackStack(tagFilter: (String) -> Boolean) = backStack.map { it.tag }.any(tagFilter)
 
-    override fun showDialog(dialog: DialogFragment, tag: String) {
+    override fun showDialog(dialog: DialogFragment, tag: String, startX: Int?, startY: Int?) {
         blockUI(0, {
             blockUI(1000)
+            val args: Bundle = dialog.arguments ?: Bundle()
+            startX?.let { args.putInt(CircularRevealDialogFragment.START_POSITION_X, it) }
+            startY?.let { args.putInt(CircularRevealDialogFragment.START_POSITION_Y, it) }
+            dialog.arguments = args
             dialog.show(supportFragmentManager, tag)
         })
     }
@@ -283,11 +287,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
         if (resumedFragment?.isBackPressConsumed() ?: false) {
             return
         }
-        if (backStack.dropLastWhile { it.asNested }.size > 1) {
-            goBack()
-        } else {
-            finish()
-        }
+        goBack()
     }
 
     private fun goBack() {

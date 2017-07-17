@@ -24,3 +24,15 @@ fun TextView.setTextIfNotYet(text: String) {
         LogUtils.d("TextView.setTextIfNotYet text == this.text.toString()")
     }
 }
+
+fun View.getCenterX(): Int {
+    val locationOnScreen = arrayOf(0, 0).toIntArray()
+    getLocationOnScreen(locationOnScreen)
+    return locationOnScreen[0] + width / 2
+}
+
+fun View.getCenterY(): Int {
+    val locationOnScreen = arrayOf(0, 0).toIntArray()
+    getLocationOnScreen(locationOnScreen)
+    return locationOnScreen[1] + height / 2
+}
