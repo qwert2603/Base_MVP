@@ -1,6 +1,8 @@
 package com.qwert2603.base_mvp.base
 
-class OneShotFlag {
+import com.qwert2603.base_mvp.model.IdentifiableLong
+
+class OneShotFlag<T>(val data: T? = null) {
     private var readId: Long? = null
 
     fun getFlag(vsId: Long) =
@@ -8,16 +10,16 @@ class OneShotFlag {
             else readId == vsId
 
     fun cancelIfNotUsed() {
-        readId = -1L
+        readId = IdentifiableLong.NO_ID
     }
 
     companion object {
-        val CANCELLED = OneShotFlag().also { it.cancelIfNotUsed() }
+        fun <T> createCancelled() = OneShotFlag<T>().also { it.cancelIfNotUsed() }
     }
 }
 
 open class ViewState_ID {
-    val id: Long = getNextId()
+    val viewStateId: Long = getNextId()
 
     companion object {
         private var lastId = 1L
