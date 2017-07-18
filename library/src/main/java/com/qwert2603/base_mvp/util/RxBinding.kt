@@ -3,17 +3,8 @@ package com.qwert2603.base_mvp.util
 import android.content.res.Resources
 import android.support.annotation.StringRes
 import android.support.design.widget.TextInputLayout
-import android.support.transition.TransitionManager
 import android.support.v4.content.res.ResourcesCompat
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import com.qwert2603.base_mvp.R
-import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
 import io.reactivex.functions.Consumer
 
 fun TextInputLayout.errorResConsumer(setErrorEnabled: Boolean = true): Consumer<in Int> = Consumer { errorRes ->
@@ -25,45 +16,6 @@ fun TextInputLayout.errorResConsumer(setErrorEnabled: Boolean = true): Consumer<
     } else {
         error = context.resources.getText(errorRes)
     }
-}
-
-fun TextView.textConsumer(): Consumer<in String> = Consumer { text = it }
-
-fun TextView.textColorConsumer(): Consumer<in Int> = Consumer { setTextColor(it) }
-
-fun View.enabledConsumer(): Consumer<Boolean> = Consumer { isEnabled = it }
-
-fun View.visibilityConsumer(): Consumer<Boolean> = Consumer {
-    TransitionManager.beginDelayedTransition(parent as ViewGroup)
-    visibility = if (it) View.VISIBLE else View.GONE
-}
-
-fun EditText.textChangesObservable(): Observable<String> = Observable.create { observableEmitter: ObservableEmitter<String> ->
-    val tw = object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {}
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = observableEmitter.onNext(s.toString())
-    }
-    observableEmitter.setCancellable { removeTextChangedListener(tw) }
-    addTextChangedListener(tw)
-    observableEmitter.onNext(text.toString())
-}
-
-fun EditText.textChangesLongObservable(): Observable<Long> = textChangesObservable()
-        .emptyToZero()
-        .map(String::filterSpaces)
-        .map(String::toLong)
-        .distinctUntilChanged()
-        .doOnNext {
-            if (!text.isEmpty()) {
-                setText(it.toSpacedString())
-                setSelection(text.length)
-            }
-        }
-
-fun View.clickObservable(): Observable<Any> = Observable.create { observableEmitter: ObservableEmitter<Any> ->
-    setOnClickListener { observableEmitter.onNext(Any()) }
-    observableEmitter.setCancellable { setOnClickListener(null) }
 }
 
 fun Consumer<in String>.toFormattedString(resources: Resources, @StringRes stringRes: Int): Consumer<Long>
