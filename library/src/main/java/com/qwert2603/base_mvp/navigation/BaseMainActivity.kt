@@ -45,8 +45,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     protected abstract val navigationItems: List<NavigationItem>
 
-    protected open fun translateFragmentOnDrawerSlide() = true
-    protected open fun translateFragmentOnDrawerSlideFraction() = 0.23f
+    open protected fun translateFragmentOnDrawerSlide() = true
+    open protected fun translateFragmentOnDrawerSlideFraction() = 0.23f
     private var slideOffset = 0f
 
     private lateinit var backStack: List<BackStackItem>
@@ -69,7 +69,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             .addTransition(ChangeClipBounds())
             .addTransition(ChangeTransform())
 
-    protected val allowTransitionOverlap = true
+    open protected val allowTransitionOverlap = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BaseApplication.baseDiManager.navigationComponent.inject(this@BaseMainActivity)
