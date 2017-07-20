@@ -69,6 +69,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
             .addTransition(ChangeClipBounds())
             .addTransition(ChangeTransform())
 
+    protected val allowTransitionOverlap = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         BaseApplication.baseDiManager.navigationComponent.inject(this@BaseMainActivity)
         super.onCreate(savedInstanceState)
@@ -195,8 +197,8 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
                 } else {
                     fragment = backStackItem.createFragment()
 
-                    fragment.allowEnterTransitionOverlap = true
-                    fragment.allowReturnTransitionOverlap = true
+                    fragment.allowEnterTransitionOverlap = allowTransitionOverlap
+                    fragment.allowReturnTransitionOverlap = allowTransitionOverlap
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         val transition = createSharedElementTransition()
