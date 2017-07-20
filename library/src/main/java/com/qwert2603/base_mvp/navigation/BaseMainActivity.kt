@@ -255,7 +255,7 @@ abstract class BaseMainActivity : AppCompatActivity(), Navigation {
 
     @SuppressLint("RtlHardcoded")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    open protected fun createFragmentTransition(moveStart: Boolean): Transition = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
+    open protected fun createFragmentTransition(moveStart: Boolean): Transition? = Slide(if (moveStart) Gravity.LEFT else Gravity.RIGHT)
 
     override fun navigateTo(backStackItem: BackStackItem, delay: Boolean, sharedElements: List<View>) {
         LogUtils.d("navigateTo $backStackItem")
